@@ -23,15 +23,25 @@ background = pygame.transform.scale(pygame.image.load('Background/background.jpg
 class Enemy(pygame.sprite.Sprite):
     def __init__(self,position):
         super().__init__(enemy_group,all_sprites)
+
+        self.hp=None # Health points
+        self.speed=None # Speed of the enemy
+
+        #Image and hitbox
         self.image = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg').convert_alpha()
         self.image = pygame.transform.rotozoom(self.image,0,.4)
         self.rect = self.image.get_rect()
+
+        #Position and movement
         self.rect.center = position
+        self.position=pygame.math.Vector2(position)
         self.direction=pygame.math.Vector2(0,0)
         self.velocity=pygame.math.Vector2(0,0)
-        self.speed=2
-        self.position=pygame.math.Vector2(position)
-    
+
+        
+
+        
+    #Enemy movement
     def chase_player(self):
         player_vector= pygame.math.Vector2(player.hitbox_rect.center)
         enemy_vector= pygame.math.Vector2(self.rect.center)
