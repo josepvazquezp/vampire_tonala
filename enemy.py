@@ -15,7 +15,7 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__(enemy_group, all_sprites)
 
         self.hp = None  # Health points
-        self.speed = 4  # Speed of the enemy
+        self.speed = 1  # Speed of the enemy
 
         # Image and hitbox
         self.image = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg').convert_alpha()
