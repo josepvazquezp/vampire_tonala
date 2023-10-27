@@ -15,7 +15,7 @@ El reeper tiene HP: 600, power: 60, speed: 5
 class Enemy(pygame.sprite.Sprite):
     ENEMIES = []
 
-    def __init__(self, position, hp, speed, power, image, player, space):
+    def __init__(self, position, hp, speed, power, image, player, space, size):
         super().__init__(enemy_group, all_sprites)
 
         self.hp = hp  # Health points
@@ -39,7 +39,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.body = pymunk.Body(1, 100)
         self.body.position = position
-        self.shape = pymunk.Circle(self.body, 10)
+        self.shape = pymunk.Circle(self.body, size)
         self.shape.collision_type = 2
         space.add(self.body, self.shape)
 
@@ -66,8 +66,8 @@ class Enemy(pygame.sprite.Sprite):
         return (player_vector - enemy_vector).magnitude()
 
     def update(self):
-         pass
-        #self.chase_player()
+        
+        self.chase_player()
 
     def take_damage(self, damage: int):
         ''''''
@@ -80,18 +80,18 @@ class Enemy(pygame.sprite.Sprite):
 
 class Pipeestrello(Enemy):
     def __init__(self, position, image, player, space):
-        super().__init__(position, 1, 1.4, 5, image, player, space)
+        super().__init__(position, 1, 1.4, 5, image, player, space, 15)
 
 class Mantichana(Enemy):
     def __init__(self, position, image, player, space):
-        super().__init__(position, 150, 0.8, 20, image, player, space)
+        super().__init__(position, 150, 0.8, 20, image, player, space, 40)
 
 class Reaper(Enemy):
     def __init__(self, position, image, player, space):
-        super().__init__(position, 600, 5, 60, image, player, space)
+        super().__init__(position, 600, 5, 60, image, player, space, 40)
 
 class Skullone(Enemy):
     def __init__(self, position, image, player, space):
-        super().__init__(position, 30, 1, 10, image, player, space)
+        super().__init__(position, 30, 1, 10, image, player, space, 25)
 
 enemy_group = pygame.sprite.Group()

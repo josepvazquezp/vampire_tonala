@@ -36,10 +36,10 @@ reaperImage = pygame.image.load('Assets/Enemies/Sprite-BOSS_XLDEATH.jpg')
 
 # Create player
 player=Player(100, 5, space)
-bat = Pipeestrello((800,600), batImage, player, space)
+bat = Pipeestrello((800,700), batImage, player, space)
 mantis = Mantichana((400,600), mantisImage, player, space)
-# skullone = Skullone((200,200), skulloneImage, player, space)
-# reaper = Reaper((400,620), reaperImage, player, space)
+skullone = Skullone((200,200), skulloneImage, player, space)
+reaper = Reaper((800,620), reaperImage, player, space)
 
 all_sprites.add(player)
 
@@ -127,6 +127,7 @@ while True:
     screen.blit(background, (0, 0))
     all_sprites.draw(screen)
     all_sprites.update()
+
 
 
 
