@@ -1,20 +1,39 @@
+from __future__ import annotations
 import pygame
 import math
 from settings import *
 from projectile import *
+import pymunk
+
+def convert_coordinates(point):
+        return int(point[0]), (int(point[1]))
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, hp, speed, space):
         super().__init__()
         self.pos = pygame.math.Vector2(WIDTH/2, HEIGHT/2)
         self.image = pygame.transform.rotozoom(pygame.image.load('Assets/Characters/Antonio/Sprite-Antonio.jpg').convert_alpha(),0,.5)
-        self.speed = 5
+        self.speed = speed
+        self.hp = hp
         self.base_player_image = self.image
         self.hitbox_rect = self.base_player_image.get_rect(center=self.pos)
         self.rect = self.hitbox_rect.copy()
         self.use_weapon=False
         self.weapon_cooldown=0
         self.current_direction = 0
+
+        self.body = pymunk.Body(1, 100)
+        self.body.position = convert_coordinates(self.pos)
+        self.shape = pymunk.Circle(self.body, 25)
+        self.shape.collision_type = 1
+
+        self.space = space
+        space.add(self.body, self.shape)
+
+
+    def take_damage(self, damage: int):
+        ''' '''
+        self.hp -= damage
 
     def player_rotate(self):
         keys = pygame.key.get_pressed()
@@ -43,6 +62,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_s]:
             self.velocity_y = self.speed
 
+
         if self.velocity_x != 0 and self.velocity_y != 0: # Diagonal movement
             self.velocity_x /= math.sqrt(2)
             self.velocity_y /= math.sqrt(2)
@@ -68,19 +88,23 @@ class Player(pygame.sprite.Sprite):
             elif keys[pygame.K_s]:
                 self.current_direction = 90
 
-            self.projectile = Projectile(spawn_projectile[0],spawn_projectile[1],self.current_direction)
+            self.projectile = Projectile(spawn_projectile[0],spawn_projectile[1],self.current_direction, self.space)
             projectile_group.add(self.projectile)
             all_sprites.add(self.projectile)
 
     
     def move(self):
         self.pos += pygame.math.Vector2(self.velocity_x,self.velocity_y)
+
         self.hitbox_rect.center = self.pos
+        self.body.position = convert_coordinates(self.pos)
 
     def update(self):
         self.user_input()
         self.move()
         self.player_rotate()
+
+
 
         if self.weapon_cooldown > 0:
             self.weapon_cooldown -= 1
