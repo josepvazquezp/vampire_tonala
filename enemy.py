@@ -11,11 +11,15 @@ El reeper tiene HP: 600, power: 60, speed: 5
 '''
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, position, player):
+    ENEMIES = []
+
+
+    def __init__(self, position, player, type):
         super().__init__(enemy_group, all_sprites)
 
-        self.hp = None  # Health points
+        self.hp = 10  # Health points
         self.speed = 1  # Speed of the enemy
+        self.damage = 5
 
         # Image and hitbox
         self.image = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg').convert_alpha()
@@ -30,6 +34,20 @@ class Enemy(pygame.sprite.Sprite):
 
         # Apuntador al player
         self.player = player
+        Enemy.ENEMIES.append(self)
+
+        # self.body = pymunk.Body(1, 100)
+        # self.body.position = position
+        # self.shape = pymunk.Circle(self.body, 10)
+        # self.shape.collision_type = type
+
+
+    def take_damage(self, damage: int):
+         ''''''
+         self.hp -= damage
+         if self.hp <= 0:
+              Enemy.ENEMIES.remove(self)
+              del self
 
     # Enemy movement
     def chase_player(self):
@@ -48,11 +66,13 @@ class Enemy(pygame.sprite.Sprite):
 
         self.rect.centerx = self.position.x
         self.rect.centery = self.position.y
+        # self.body.position = self.position.x, self.position.y
 
     def get_vector_distance(self, player_vector, enemy_vector):
         return (player_vector - enemy_vector).magnitude()
 
     def update(self):
+         
         self.chase_player()
 
 enemy_group = pygame.sprite.Group()

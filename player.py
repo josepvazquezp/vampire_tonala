@@ -1,7 +1,9 @@
+from __future__ import annotations
 import pygame
 import math
 from settings import *
 from projectile import *
+import pymunk
 
 
 class Player(pygame.sprite.Sprite):
@@ -17,6 +19,11 @@ class Player(pygame.sprite.Sprite):
         self.use_weapon=False
         self.weapon_cooldown=0
         self.current_direction = 0
+
+
+    def take_damage(self, damage: int):
+        ''' '''
+        self.hp -= damage
 
     def player_rotate(self):
         keys = pygame.key.get_pressed()
@@ -44,6 +51,7 @@ class Player(pygame.sprite.Sprite):
             self.velocity_y = -self.speed
         if keys[pygame.K_s]:
             self.velocity_y = self.speed
+
 
         if self.velocity_x != 0 and self.velocity_y != 0: # Diagonal movement
             self.velocity_x /= math.sqrt(2)
@@ -77,6 +85,7 @@ class Player(pygame.sprite.Sprite):
     
     def move(self):
         self.pos += pygame.math.Vector2(self.velocity_x,self.velocity_y)
+
         self.hitbox_rect.center = self.pos
 
     def update(self):
