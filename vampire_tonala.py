@@ -39,51 +39,62 @@ player=Player(100, 5, space)
 bat = Pipeestrello((800,700), batImage, player, space)
 mantis = Mantichana((400,600), mantisImage, player, space)
 skullone = Skullone((200,200), skulloneImage, player, space)
-reaper = Reaper((800,620), reaperImage, player, space)
+#reaper = Reaper((800,620), reaperImage, player, space)
 
 all_sprites.add(player)
 
-flagC = True
 gameSeconds = 0
 gameMin = 0
 playing = True
 
 stop_event = Event()
+enemyCooldown = []
 
 def draw_entity(screen, entity):
     for shape in entity.body.shapes:
         if isinstance(shape, pymunk.Circle):
             pos_x, pos_y = map(int, shape.body.position)
             pygame.draw.circle(screen, (255, 0, 0), (pos_x, pos_y), int(shape.radius))
-
+'''
 def detectar_colision(p : Player, e: Enemy, flag: bool) -> bool:
     global flagC
 
     if pygame.Rect.colliderect(p.rect, e.rect) and flag:
         p.take_damage(e.power)
         flagC = False
+'''
 
 def timer(segundos):
-    global flagC, gameSeconds, gameMin, playing
+    global gameSeconds, gameMin, playing
+    milis = 0
+
     while playing:
         if stop_event.isSet():
             playing = False
 
-        if flagC == False:
-            flagC = True
+        milis += 1
 
-        gameSeconds += 1
+        if(milis == 10):
+            milis = 0
 
-        if gameSeconds == 60:
-            gameMin += 1
-            gameSeconds = 0
+            gameSeconds += 1
 
-        time.sleep(1)
+            if gameSeconds == 60:
+                gameMin += 1
+                gameSeconds = 0
+
+            for ene in enemyCooldown:
+                ene.attackCooldown -= 1
+
+                if(ene.attackCooldown == 0):
+                    enemyCooldown.remove(ene)
+
+        player.using_weapon()
+
+        time.sleep(0.1)
 
 hilo = threading.Thread(target=timer, args=(10,))
 hilo.start()
-
-
 
 def draw_entity(screen, entity):
     for shape in entity.body.shapes:
@@ -91,11 +102,13 @@ def draw_entity(screen, entity):
             pos_x, pos_y = map(int, shape.body.position)
             pygame.draw.circle(screen, (255, 0, 0), (pos_x, pos_y), int(shape.radius))
 
-
 def enemy_hit_player(self, arbiter, space):
     for ene in Enemy.ENEMIES:
-        if pygame.Rect.colliderect(player.rect, ene.rect):
+        if pygame.Rect.colliderect(player.rect, ene.rect) and ene.attackCooldown == 0:
             player.take_damage(ene.power)
+
+            ene.restoreCooldown()
+            enemyCooldown.append(ene)
     return True
 
 
@@ -115,8 +128,6 @@ handler2.begin =  projectile_hit_enemigo
 
 
 while True:
-
-
     keys = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

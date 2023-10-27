@@ -21,6 +21,8 @@ class Enemy(pygame.sprite.Sprite):
         self.hp = hp  # Health points
         self.speed = speed  # Speed of the enemy
         self.power = power
+        self.cooldown = 2
+        self.attackCooldown = 0
 
         # Image and hitbox
         self.image = image.convert_alpha()
@@ -72,11 +74,12 @@ class Enemy(pygame.sprite.Sprite):
     def take_damage(self, damage: int):
         ''''''
         self.hp -= damage
-        print(f"Vida: {self.hp}")
         if self.hp <= 0:
             Enemy.ENEMIES.remove(self)
             self.kill()
-            print(Enemy.ENEMIES)
+
+    def restoreCooldown(self):
+        self.attackCooldown = self.cooldown
 
 class Pipeestrello(Enemy):
     def __init__(self, position, image, player, space):
