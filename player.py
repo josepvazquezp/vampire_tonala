@@ -4,11 +4,12 @@ from settings import *
 from projectile import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, hp, speed):
         super().__init__()
         self.pos = pygame.math.Vector2(WIDTH/2, HEIGHT/2)
         self.image = pygame.transform.rotozoom(pygame.image.load('Assets/Characters/Antonio/Sprite-Antonio.jpg').convert_alpha(),0,.5)
-        self.speed = 5
+        self.speed = speed
+        self.hp = hp
         self.base_player_image = self.image
         self.hitbox_rect = self.base_player_image.get_rect(center=self.pos)
         self.rect = self.hitbox_rect.copy()

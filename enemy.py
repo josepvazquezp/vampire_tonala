@@ -11,14 +11,15 @@ El reeper tiene HP: 600, power: 60, speed: 5
 '''
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, position, player):
+    def __init__(self, position, hp, speed, power, image, player):
         super().__init__(enemy_group, all_sprites)
 
-        self.hp = None  # Health points
-        self.speed = 4  # Speed of the enemy
+        self.hp = hp  # Health points
+        self.speed = speed  # Speed of the enemy
+        self.power = power
 
         # Image and hitbox
-        self.image = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg').convert_alpha()
+        self.image = image.convert_alpha()
         self.image = pygame.transform.rotozoom(self.image, 0, .4)
         self.rect = self.image.get_rect()
 
