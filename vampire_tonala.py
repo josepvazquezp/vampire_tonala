@@ -1,6 +1,9 @@
 import pygame
 from sys import exit
 import math
+
+import pymunk
+
 from settings import *
 from player import *
 from projectile import *
@@ -24,12 +27,17 @@ background = pygame.transform.scale(pygame.image.load('Background/background.jpg
 
 mantisImage = pygame.image.load('Assets/Enemies/Sprite-XLMANTIS.jpg')
 batImage = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg')
+skulloneImage = pygame.image.load('Assets/Enemies/Sprite-SKULLNOAURA.jpg')
+reaperImage = pygame.image.load('Assets/Enemies/Sprite-BOSS_XLDEATH.jpg')
+
+
 # Create player
 player=Player(100, 5)
-bat=Enemy((800,600), 1, 1.4, 5, batImage, player)
-mantis = Enemy((400,600), 150, 0.8, 20, mantisImage, player)
+bat = Pipeestrello((800,600), batImage, player)
+mantis = Mantichana((400,600), mantisImage, player)
+skullone = Skullone((200,200), skulloneImage, player)
+reaper = Reaper((400,620), reaperImage, player)
 
-enemies = [bat, mantis]
 all_sprites.add(player)
 
 flagC = True
@@ -39,11 +47,17 @@ playing = True
 
 stop_event = Event()
 
+def draw_entity(screen, entity):
+    for shape in entity.body.shapes:
+        if isinstance(shape, pymunk.Circle):
+            pos_x, pos_y = map(int, shape.body.position)
+            pygame.draw.circle(screen, (255, 0, 0), (pos_x, pos_y), int(shape.radius))
+
 def detectar_colision(p : Player, e: Enemy, flag: bool) -> bool:
     global flagC
 
     if pygame.Rect.colliderect(p.rect, e.rect) and flag:
-        p.hp -= e.power
+        p.take_damage(e.power)
         flagC = False
 
 def timer(segundos):
@@ -89,8 +103,8 @@ while True:
     screen.blit(hp_text, (WIDTH / 2 - 100, 10))
 
     # Esto es lo más cercano que he logrado hacer para que detecte colision con enemigos
-    if enemies:
-        for enemy in enemies:
+    if Enemy.ENEMIES:
+        for enemy in Enemy.ENEMIES:
             detectar_colision(player, enemy, flagC)
 
     pygame.display.update()

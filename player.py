@@ -17,6 +17,10 @@ class Player(pygame.sprite.Sprite):
         self.weapon_cooldown=0
         self.current_direction = 0
 
+    def take_damage(self, damage: int):
+        ''' '''
+        self.hp -= damage
+
     def player_rotate(self):
         keys = pygame.key.get_pressed()
         if(keys[pygame.K_a]):
