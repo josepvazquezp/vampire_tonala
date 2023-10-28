@@ -33,6 +33,7 @@ class Projectile(pygame.sprite.Sprite):
         self.shape = pymunk.Circle(self.body, 10) #El segundo valor es el radio del cuerpo
         self.shape.collision_type = 3
         space.add(self.body, self.shape)
+        self.space = space
 
         Projectile.PROJECTILES.append(self)
         
@@ -48,6 +49,7 @@ class Projectile(pygame.sprite.Sprite):
 
 
     def destroy_projectile(self):
+        self.space.remove(self.body, self.shape)
         Projectile.PROJECTILES.remove(self)
         self.kill()
     
