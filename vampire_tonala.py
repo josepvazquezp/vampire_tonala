@@ -42,19 +42,17 @@ bat = Pipeestrello((800,700), batImage, player, space)
 mantis = Mantichana((400,600), mantisImage, player, space)
 skullone = Skullone((200,200), skulloneImage, player, space)
 
-bat2 = Pipeestrello((1000,700), batImage, player, space)
-bat3 = Pipeestrello((1200,700), batImage, player, space)
-bat4 = Pipeestrello((1400,700), batImage, player, space)
-bat5 = Pipeestrello((1600,700), batImage, player, space)
-bat6 = Pipeestrello((1800,700), batImage, player, space)
-bat7 = Pipeestrello((2000,700), batImage, player, space)
-bat8 = Pipeestrello((2200,700), batImage, player, space)
-bat9 = Pipeestrello((2400,700), batImage, player, space)
-bat10 = Pipeestrello((2600,700), batImage, player, space)
-bat11 = Pipeestrello((2800,700), batImage, player, space)
-
 
 #reaper = Reaper((800,620), reaperImage, player, space)
+
+#Spawn variables
+MAX_ENEMIES = 12
+SPAWN_RADIUS = 300  # radius around the player within which enemies will spawn
+spawned_enemies = []  # List to keep track of spawned enemies
+ENEMY_TYPES = ['1', '2', '3']  # Add more enemy types as needed
+ENEMY_SPAWN_RATE = [60, 120, 180]  # The game time (in seconds) at which new enemy types are introduced
+current_enemy_types = ['1']  # List to keep track of current enemy types
+
 
 all_sprites.add(player)
 
@@ -65,6 +63,33 @@ playing = True
 
 stop_event = Event()
 enemyCooldown = []
+
+def spawn_enemy(player, angle, enemy_type):
+    playerposcoord= convert_coordinates(player.pos)
+    ppx=playerposcoord[0]
+    ppy=playerposcoord[1]
+    x = ppx + SPAWN_RADIUS * math.cos(math.radians(angle))
+    y = ppy + SPAWN_RADIUS * math.sin(math.radians(angle))
+    if enemy_type == '1':
+        enemy = Pipeestrello((x, y), batImage, player, space)
+    elif enemy_type == '2':
+        enemy = Skullone((x, y), skulloneImage, player, space)
+    elif enemy_type == '3':
+        enemy = Mantichana((x, y), mantisImage, player, space)
+    spawned_enemies.append(enemy)
+
+
+angle_increment = 360 / MAX_ENEMIES
+current_angle = 0  # To keep track of the last spawn angle
+
+def updateSpawn():
+    global current_angle
+    if len(spawned_enemies) < MAX_ENEMIES:
+        enemy_type = random.choice(current_enemy_types)
+        spawn_enemy(player, current_angle, enemy_type)
+        current_angle += angle_increment
+        if current_angle >= 360:
+            current_angle = 0
 
 
 '''
@@ -77,7 +102,7 @@ def detectar_colision(p : Player, e: Enemy, flag: bool) -> bool:
 '''
 
 def timer(segundos):
-    global gameSeconds, gameMin, playing
+    global gameSeconds, gameMin, playing, current_enemy_types
     milis = 0
 
     while playing:
@@ -90,6 +115,12 @@ def timer(segundos):
             milis = 0
 
             gameSeconds += 1
+
+            # Update enemy types
+            for i, time_threshold in enumerate(ENEMY_SPAWN_RATE):
+                 if gameSeconds >= time_threshold:
+                     if ENEMY_TYPES[i] not in current_enemy_types:
+                         current_enemy_types.append(ENEMY_TYPES[i])
 
             if gameSeconds == 60:
                 gameMin += 1
@@ -164,6 +195,7 @@ handler2.begin =  projectile_hit_enemigo
 
 
 while True:
+    updateSpawn()
     keys = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -175,6 +207,17 @@ while True:
     all_sprites.draw(screen)
     all_sprites.update()
 
+    for enemy in spawned_enemies:
+        if enemy.is_dead():
+            # Logic for removing enemy goes here...
+            spawned_enemies.remove(enemy)
+            
+            # Spawn new enemy
+            enemy_type = random.choice(current_enemy_types)
+            spawn_enemy(player, current_angle, enemy_type)
+            current_angle += angle_increment
+            if current_angle >= 360:
+                current_angle = 0
 
     # Toda esta madre sirve para hacer un display bien sencillo del HP del cabron
     font = pygame.font.Font(None, 36)
