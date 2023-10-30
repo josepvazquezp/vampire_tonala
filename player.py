@@ -55,30 +55,36 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             self.velocity_x = -self.speed
+            self.current_direction = 180
         if keys[pygame.K_d]:
             self.velocity_x = self.speed
+            self.current_direction = 0
         if keys[pygame.K_w]:
             self.velocity_y = -self.speed
+            self.current_direction = 270
         if keys[pygame.K_s]:
             self.velocity_y = self.speed
-
+            self.current_direction = 90
 
         if self.velocity_x != 0 and self.velocity_y != 0: # Diagonal movement
             self.velocity_x /= math.sqrt(2)
             self.velocity_y /= math.sqrt(2)
 
+        '''
         if keys[pygame.K_SPACE]:
             self.use_weapon=True
             self.using_weapon()
         else:
             self.use_weapon=False
+        '''
 
     def using_weapon(self):
-        keys = pygame.key.get_pressed()
+        #keys = pygame.key.get_pressed()
         if self.weapon_cooldown == 0:
             self.weapon_cooldown = 10
             spawn_projectile = self.pos
-            
+
+            '''
             if keys[pygame.K_d]:
                 self.current_direction = 0
             elif keys[pygame.K_a]:
@@ -87,6 +93,7 @@ class Player(pygame.sprite.Sprite):
                 self.current_direction = 270
             elif keys[pygame.K_s]:
                 self.current_direction = 90
+            '''
 
             self.projectile = Projectile(spawn_projectile[0],spawn_projectile[1],self.current_direction, self.space)
             projectile_group.add(self.projectile)

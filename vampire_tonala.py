@@ -93,6 +93,7 @@ def timer(segundos):
 
         time.sleep(0.1)
 
+
 hilo = threading.Thread(target=timer, args=(10,))
 hilo.start()
 
