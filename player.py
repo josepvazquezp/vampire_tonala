@@ -14,13 +14,20 @@ class Player(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(WIDTH/2, HEIGHT/2)
         self.image = pygame.transform.rotozoom(pygame.image.load('Assets/Characters/Antonio/Sprite-Antonio.jpg').convert_alpha(),0,.5)
         self.speed = speed
-        self.hp = hp
+        
         self.base_player_image = self.image
         self.hitbox_rect = self.base_player_image.get_rect(center=self.pos)
         self.rect = self.hitbox_rect.copy()
         self.use_weapon=False
         self.weapon_cooldown=0
         self.current_direction = 0
+
+        self.hp = hp
+        self.max_hp = self.hp
+        self.level: int = 0
+        self.curren_xp: int = 0
+        self.next_level_xp = 100
+        self.gold = 0
 
         self.body = pymunk.Body(1, 100)
         self.body.position = convert_coordinates(self.pos)
@@ -105,6 +112,45 @@ class Player(pygame.sprite.Sprite):
 
         self.hitbox_rect.center = self.pos
         self.body.position = convert_coordinates(self.pos)
+
+    def apply_stat(self, stat: int, modif: float):
+        ''' Recibe un stat a modificar y la cantidad que se le va a aplicar '''
+        if(stat == 1):
+            self.gain_xp(modif)
+        elif(stat == 2):
+            self.heal(modif)
+        elif(stat == 3):
+            self.earn_gold(modif)
+
+
+    def gain_xp(self, xp: int):
+        ''' Recibe una cantidad de experiencia como entero y la aplica al jugador.
+            Si la experiencia actual (current_xp) iguala o supera a la experiencia
+            para el siguiente nivel (nex_level_xp) sube de nivel'''
+        self.curren_xp += xp
+        if(self.curren_xp >= self.next_level_xp):
+            self.level_up()
+        
+
+    def level_up(self):
+        ''' Sube de nivel al jugador y establece la nueva meta para el siguiente nivel '''
+        self.level += 1
+        self.next_level_xp *= 2
+        print("LEVEL UP")
+
+
+    def heal(self, heal: int):
+        '''  '''
+        if self.hp + heal > self.max_hp:
+            self.hp = self.max_hp
+        else:
+            self.hp += heal
+
+    def earn_gold(self, gold: int):
+        ''''''
+        self.gold += gold
+
+
 
     def update(self):
         self.user_input()

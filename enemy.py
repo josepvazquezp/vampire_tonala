@@ -1,9 +1,13 @@
 import pygame
 from sys import exit
 import math
+from chest import *
+from item import *
 from settings import *
 from player import *
 from projectile import *
+import random
+
 import pymunk
 '''
 El bat tiene HP: 1, power: 5, speed: 1.4
@@ -44,6 +48,7 @@ class Enemy(pygame.sprite.Sprite):
         self.shape = pymunk.Circle(self.body, size)
         self.shape.collision_type = 2
         space.add(self.body, self.shape)
+        self.space = space
 
     # Enemy movement
     def chase_player(self):
@@ -63,7 +68,8 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.centerx = self.position.x
         self.rect.centery = self.position.y
         self.body.position = self.position.x, self.position.y
-
+    def is_dead(self):
+        return self.hp <= 0
     def get_vector_distance(self, player_vector, enemy_vector):
         return (player_vector - enemy_vector).magnitude()
 
@@ -75,8 +81,32 @@ class Enemy(pygame.sprite.Sprite):
         ''''''
         self.hp -= damage
         if self.hp <= 0:
+            self.drop_item()
+            self.space.remove(self.body, self.shape)
             Enemy.ENEMIES.remove(self)
             self.kill()
+
+    def drop_item(self):
+        ''''''
+        
+
+        choice = random.randint(0, 100)
+
+        if choice >= 0 and choice <= 10:
+            self.chest = Chest((self.position.x, self.position.y), self.space)
+            chest_group.add(self.chest)
+            all_sprites.add(self.chest)
+            return
+        elif choice >= 11 and choice <= 40:
+            self.item = ExperienceGem((self.position.x, self.position.y), self.space)
+
+        elif choice >= 41 and choice <= 70:
+            self.item = FloorChicken((self.position.x, self.position.y), self.space)
+
+        elif choice >= 71 and choice <= 100:
+            self.item = GoldCoin((self.position.x, self.position.y), self.space)
+        items_group.add(self.item)
+        all_sprites.add(self.item)
 
     def restoreCooldown(self):
         self.attackCooldown = self.cooldown
