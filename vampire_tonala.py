@@ -1,3 +1,4 @@
+from random import choice
 import pygame
 from sys import exit
 import math
@@ -46,12 +47,12 @@ skullone = Skullone((200,200), skulloneImage, player, space)
 #reaper = Reaper((800,620), reaperImage, player, space)
 
 #Spawn variables
-MAX_ENEMIES = 12
-SPAWN_RADIUS = 300  # radius around the player within which enemies will spawn
+
+SPAWN_RADIUS = 600  # radius around the player within which enemies will spawn
 spawned_enemies = []  # List to keep track of spawned enemies
-ENEMY_TYPES = ['1', '2', '3']  # Add more enemy types as needed
+ENEMY_TYPES = [1,2,3]  # Add more enemy types as needed
 ENEMY_SPAWN_RATE = [60, 120, 180]  # The game time (in seconds) at which new enemy types are introduced
-current_enemy_types = ['1']  # List to keep track of current enemy types
+current_enemy_types = [1]  # List to keep track of current enemy types
 
 
 all_sprites.add(player)
@@ -70,21 +71,22 @@ def spawn_enemy(player, angle, enemy_type):
     ppy=playerposcoord[1]
     x = ppx + SPAWN_RADIUS * math.cos(math.radians(angle))
     y = ppy + SPAWN_RADIUS * math.sin(math.radians(angle))
-    if enemy_type == '1':
+    if enemy_type == 1:
         enemy = Pipeestrello((x, y), batImage, player, space)
-    elif enemy_type == '2':
+    elif enemy_type == 2:
         enemy = Skullone((x, y), skulloneImage, player, space)
-    elif enemy_type == '3':
+    elif enemy_type == 3:
         enemy = Mantichana((x, y), mantisImage, player, space)
     spawned_enemies.append(enemy)
 
-
-angle_increment = 360 / MAX_ENEMIES
+#Spawn variables
+max_enemies = 12
+angle_increment = 360 / max_enemies
 current_angle = 0  # To keep track of the last spawn angle
 
 def updateSpawn():
     global current_angle
-    if len(spawned_enemies) < MAX_ENEMIES:
+    if len(spawned_enemies) < max_enemies:
         enemy_type = random.choice(current_enemy_types)
         spawn_enemy(player, current_angle, enemy_type)
         current_angle += angle_increment
@@ -102,8 +104,9 @@ def detectar_colision(p : Player, e: Enemy, flag: bool) -> bool:
 '''
 
 def timer(segundos):
-    global gameSeconds, gameMin, playing, current_enemy_types
+    global gameSeconds, gameMin, playing, current_enemy_types,max_enemies
     milis = 0
+    spawn_control=0
 
     while playing:
         if stop_event.isSet():
@@ -113,18 +116,31 @@ def timer(segundos):
 
         if(milis == 10):
             milis = 0
+            #incremento el numero de enemigos de manera speudoaleatoria
+            spawn_control += choice([1,2,3])
 
             gameSeconds += 1
+
+            if spawn_control >= 10:
+                max_enemies += 2
+                spawn_control = 0
 
             # Update enemy types
             for i, time_threshold in enumerate(ENEMY_SPAWN_RATE):
                  if gameSeconds >= time_threshold:
                      if ENEMY_TYPES[i] not in current_enemy_types:
                          current_enemy_types.append(ENEMY_TYPES[i])
+            
+            
+
 
             if gameSeconds == 60:
                 gameMin += 1
                 gameSeconds = 0
+                #randomizo el numero de enemigos que se reduce cada vez que cambien las condiciones de spawn
+                max_enemies -= choice([8,11,15])
+                #garantizo que el minimo de spawn es 10
+                max_enemies = max(10, max_enemies)
 
             for ene in enemyCooldown:
                 ene.attackCooldown -= 1
@@ -209,7 +225,7 @@ while True:
 
     for enemy in spawned_enemies:
         if enemy.is_dead():
-            # Logic for removing enemy goes here...
+           
             spawned_enemies.remove(enemy)
             
             # Spawn new enemy
@@ -243,6 +259,16 @@ while True:
     font = pygame.font.Font(None, 36)
     hp_text = font.render(f'Feria: {player.gold}', True, (255, 255, 255))
     screen.blit(hp_text, (1000, 10))
+
+    #max enemies display
+    font = pygame.font.Font(None, 36)
+    hp_text = font.render(f'Max Enemies: {max_enemies}', True, (255, 255, 255))
+    screen.blit(hp_text, (1000, 40))
+
+    #current enemy types display
+    font = pygame.font.Font(None, 12)
+    hp_text = font.render(f'Current Enemy Types: {current_enemy_types}', True, (255, 255, 255))
+    screen.blit(hp_text, (1000, 70))
 
     pygame.display.update()
     clock.tick(FPS)
