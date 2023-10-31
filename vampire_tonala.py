@@ -51,7 +51,7 @@ skullone = Skullone((200,200), skulloneImage, player, space)
 SPAWN_RADIUS = 600  # radius around the player within which enemies will spawn
 spawned_enemies = []  # List to keep track of spawned enemies
 ENEMY_TYPES = [1,2,3]  # Add more enemy types as needed
-ENEMY_SPAWN_RATE = [60, 120, 180]  # The game time (in seconds) at which new enemy types are introduced
+ENEMY_SPAWN_RATE = [20, 40, 60]  # The game time (in seconds) at which new enemy types are introduced
 current_enemy_types = [1]  # List to keep track of current enemy types
 
 
@@ -93,6 +93,13 @@ def updateSpawn():
         if current_angle >= 360:
             current_angle = 0
 
+def get_current_enemy_types(game_seconds):
+    types = [1]
+    for i, threshold in enumerate(ENEMY_SPAWN_RATE):
+        if game_seconds >= threshold:
+            if ENEMY_TYPES[i] not in types:
+                types.append(ENEMY_TYPES[i])
+    return types
 
 '''
 def detectar_colision(p : Player, e: Enemy, flag: bool) -> bool:
@@ -106,7 +113,7 @@ def detectar_colision(p : Player, e: Enemy, flag: bool) -> bool:
 def timer(segundos):
     global gameSeconds, gameMin, playing, current_enemy_types,max_enemies
     milis = 0
-    spawn_control=0
+    maxenemy_spawn_control=0
 
     while playing:
         if stop_event.isSet():
@@ -117,23 +124,18 @@ def timer(segundos):
         if(milis == 10):
             milis = 0
             #incremento el numero de enemigos de manera speudoaleatoria
-            spawn_control += choice([1,2,3])
+            maxenemy_spawn_control += choice([1,2,3])
 
             gameSeconds += 1
 
-            if spawn_control >= 10:
+            if maxenemy_spawn_control >= 10:
                 max_enemies += 2
-                spawn_control = 0
+                maxenemy_spawn_control = 0
 
-            # Update enemy types
-            for i, time_threshold in enumerate(ENEMY_SPAWN_RATE):
-                 if gameSeconds >= time_threshold:
-                     if ENEMY_TYPES[i] not in current_enemy_types:
-                         current_enemy_types.append(ENEMY_TYPES[i])
+            if current_enemy_types!= ENEMY_TYPES:
+                current_enemy_types = get_current_enemy_types(gameSeconds)
             
             
-
-
             if gameSeconds == 60:
                 gameMin += 1
                 gameSeconds = 0
