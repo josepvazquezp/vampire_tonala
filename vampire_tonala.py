@@ -307,7 +307,7 @@ def draw_level_up_screen():
     screen.blit(level_up_background_img, (WIDTH/2 - 300,20))
     i = 0
     for i in range(2):
-        screen.blit(item_select_img, (WIDTH / 2 - 250, 165 * (i+1)))
+        screen.blit(item_select_img, (WIDTH / 2 - 240, 165 * (i+1)))
 
     #Este botón se va a quitar cuando ya este lista la selección de items
     if resume_button.draw(screen):
