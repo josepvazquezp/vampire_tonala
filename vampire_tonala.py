@@ -32,23 +32,23 @@ clock = pygame.time.Clock()
 # Load images
 background = pygame.transform.scale(pygame.image.load('Background/background.jpg').convert(), (WIDTH, HEIGHT))
 
-mantisImage = pygame.image.load('Assets/Enemies/Sprite-XLMANTIS.jpg')
+# mantisImage = pygame.image.load('Assets/Enemies/Sprite-XLMANTIS.jpg')
 # batImage = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg')
-skulloneImage = pygame.image.load('Assets/Enemies/Sprite-SKULLNOAURA.jpg')
-reaperImage = pygame.image.load('Assets/Enemies/Sprite-BOSS_XLDEATH.jpg')
+# skulloneImage = pygame.image.load('Assets/Enemies/Sprite-SKULLNOAURA.jpg')
+# reaperImage = pygame.image.load('Assets/Enemies/Sprite-BOSS_XLDEATH.jpg')
 
-knifeImage = pygame.image.load('Assets/Projectiles/navaja.png').convert_alpha()
+# knifeImage = pygame.image.load('Assets/Projectiles/navaja.png').convert_alpha()
 
-gemImage = pygame.image.load('Assets/Items/Sprite-Experience_Gem.webp').convert_alpha()
-chickenImage = pygame.image.load('Assets/Items/Sprite-Floor_Chicken.webp').convert_alpha()
-coinImage = pygame.image.load('Assets/Items/Sprite-Gold_Coin.webp').convert_alpha()
+# gemImage = pygame.image.load('Assets/Items/Sprite-Experience_Gem.webp').convert_alpha()
+# chickenImage = pygame.image.load('Assets/Items/Sprite-Floor_Chicken.webp').convert_alpha()
+# coinImage = pygame.image.load('Assets/Items/Sprite-Gold_Coin.webp').convert_alpha()
 
-chestImage = pygame.image.load('Assets/Items/Sprite-Treasure_Chest.webp').convert_alpha()
+# chestImage = pygame.image.load('Assets/Items/Sprite-Treasure_Chest.webp').convert_alpha()
 
-items = [gemImage, chickenImage, coinImage, chestImage]
+# items = [gemImage, chickenImage, coinImage, chestImage]
 
 # Create player
-player=Player(100, 5, space, knifeImage)
+player = Player(100, 5, space)
 #reaper = Reaper((800,620), reaperImage, player, space)
 
 #Spawn variables
@@ -70,19 +70,17 @@ stop_event = Event()
 enemyCooldown = []
 
 def spawn_enemy(player, angle, enemy_type):
-    global items
-
     playerposcoord= convert_coordinates(player.pos)
     ppx=playerposcoord[0]
     ppy=playerposcoord[1]
     x = ppx + SPAWN_RADIUS * math.cos(math.radians(angle))
     y = ppy + SPAWN_RADIUS * math.sin(math.radians(angle))
     if enemy_type == 1:
-        enemy = Pipeestrello((x, y), player, space, items)
+        enemy = Pipeestrello((x, y), player, space)
     elif enemy_type == 2:
-        enemy = Skullone((x, y), skulloneImage, player, space, items)
+        enemy = Skullone((x, y), player, space)
     elif enemy_type == 3:
-        enemy = Mantichana((x, y), mantisImage, player, space, items)
+        enemy = Mantichana((x, y), player, space)
     spawned_enemies.append(enemy)
 
 #Spawn variables

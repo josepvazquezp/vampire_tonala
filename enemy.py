@@ -19,7 +19,13 @@ El reeper tiene HP: 600, power: 60, speed: 5
 class Enemy(pygame.sprite.Sprite):
     ENEMIES = []
 
-    def __init__(self, position, hp, speed, power, image, player, space, size, items):
+    GEM_IMAGE = pygame.image.load('Assets/Items/Sprite-Experience_Gem.webp')
+    CHICKEN_IMAGE = pygame.image.load('Assets/Items/Sprite-Floor_Chicken.webp')
+    COIN_IMAGE = pygame.image.load('Assets/Items/Sprite-Gold_Coin.webp')
+    CHEST_IMAGE = pygame.image.load('Assets/Items/Sprite-Treasure_Chest.webp')
+    
+
+    def __init__(self, position, hp, speed, power, image, player, space, size):
         super().__init__(enemy_group, all_sprites)
 
         self.hp = hp  # Health points
@@ -49,8 +55,6 @@ class Enemy(pygame.sprite.Sprite):
         self.shape.collision_type = 2
         self.space = space
         space.add(self.body, self.shape)
-
-        self.items = items
 
     # Enemy movement
     def chase_player(self):
@@ -96,15 +100,15 @@ class Enemy(pygame.sprite.Sprite):
         if choice < 50:
             return
         elif choice >= 50 and choice <= 76:
-            self.item = ExperienceGem((self.position.x, self.position.y), self.space, self.items[0])
+            self.item = ExperienceGem((self.position.x, self.position.y), self.space, Enemy.GEM_IMAGE)
 
         elif choice >= 77 and choice <= 86:
-            self.item = FloorChicken((self.position.x, self.position.y), self.space, self.items[1])
+            self.item = FloorChicken((self.position.x, self.position.y), self.space, Enemy.CHICKEN_IMAGE)
 
         elif choice >= 87 and choice <= 97:
-            self.item = GoldCoin((self.position.x, self.position.y), self.space, self.items[2])
+            self.item = GoldCoin((self.position.x, self.position.y), self.space, Enemy.COIN_IMAGE)
         elif choice >= 98 and choice <= 100:
-            self.chest = Chest((self.position.x, self.position.y), self.space, self.items[3])
+            self.chest = Chest((self.position.x, self.position.y), self.space, Enemy.CHEST_IMAGE)
             chest_group.add(self.chest)
             all_sprites.add(self.chest)
             return
@@ -118,19 +122,25 @@ class Enemy(pygame.sprite.Sprite):
 class Pipeestrello(Enemy):
     IMAGE = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg')
 
-    def __init__(self, position, player, space, items):
-        super().__init__(position, 1, 1.4, 5, Pipeestrello.IMAGE, player, space, 15, items)
+    def __init__(self, position, player, space):
+        super().__init__(position, 1, 1.4, 5, Pipeestrello.IMAGE, player, space, 15)
 
 class Mantichana(Enemy):
-    def __init__(self, position, image, player, space, items):
-        super().__init__(position, 150, 0.8, 20, image, player, space, 40, items)
+    IMAGE = pygame.image.load('Assets/Enemies/Sprite-XLMANTIS.jpg')
+
+    def __init__(self, position, player, space):
+        super().__init__(position, 150, 0.8, 20, Mantichana.IMAGE, player, space, 40)
 
 class Reaper(Enemy):
-    def __init__(self, position, image, player, space, items):
-        super().__init__(position, 600, 5, 60, image, player, space, 40, items)
+    IMAGE = pygame.image.load('Assets/Enemies/Sprite-BOSS_XLDEATH.jpg')
+
+    def __init__(self, position, player, space):
+        super().__init__(position, 600, 5, 60, Reaper.IMAGE, player, space, 40)
 
 class Skullone(Enemy):
-    def __init__(self, position, image, player, space, items):
-        super().__init__(position, 30, 1, 10, image, player, space, 25, items)
+    IMAGE = pygame.image.load('Assets/Enemies/Sprite-SKULLNOAURA.jpg')
+
+    def __init__(self, position, player, space):
+        super().__init__(position, 30, 1, 10, Skullone.IMAGE, player, space, 25)
 
 enemy_group = pygame.sprite.Group()
