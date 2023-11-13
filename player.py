@@ -9,7 +9,7 @@ def convert_coordinates(point):
         return int(point[0]), (int(point[1]))
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, hp, speed, space):
+    def __init__(self, hp, speed, space, assetKnife):
         super().__init__()
         self.pos = pygame.math.Vector2(WIDTH/2, HEIGHT/2)
         self.image = pygame.transform.rotozoom(pygame.image.load('Assets/Characters/Antonio/Sprite-Antonio.jpg').convert_alpha(),0,.5)
@@ -36,6 +36,8 @@ class Player(pygame.sprite.Sprite):
 
         self.space = space
         space.add(self.body, self.shape)
+
+        self.assetKnife = assetKnife
 
 
     def take_damage(self, damage: int):
@@ -102,7 +104,7 @@ class Player(pygame.sprite.Sprite):
                 self.current_direction = 90
             '''
 
-            self.projectile = Projectile(spawn_projectile[0],spawn_projectile[1],self.current_direction, self.space)
+            self.projectile = Projectile(spawn_projectile[0],spawn_projectile[1],self.current_direction, self.space, self.assetKnife)
             projectile_group.add(self.projectile)
             all_sprites.add(self.projectile)
 

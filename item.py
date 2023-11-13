@@ -17,8 +17,7 @@ class Item(pygame.sprite.Sprite):
         self.stat : int  = stat
         self.modifier: float = modifier
 
-        self.image = pygame.image.load(image)
-        self.image = self.image.convert_alpha()
+        self.image = image
         self.image = pygame.transform.rotozoom(self.image, 0, 1)
         self.rect = self.image.get_rect()
         self.rect.center = position
@@ -52,16 +51,16 @@ class Item(pygame.sprite.Sprite):
 
 
 class ExperienceGem(Item):
-    def __init__(self, position, space) -> None:
-        super().__init__(position, space, 1, 25, 'Assets/Items/Sprite-Experience_Gem.webp')
+    def __init__(self, position, space, image) -> None:
+        super().__init__(position, space, 1, 25, image)
 
 class FloorChicken(Item):
-    def __init__(self, position, space) -> None:
-        super().__init__(position, space, 2, 30, 'Assets/Items/Sprite-Floor_Chicken.webp')
+    def __init__(self, position, space, image) -> None:
+        super().__init__(position, space, 2, 30, image)
 
 class GoldCoin(Item):
-    def __init__(self, position, space) -> None:
-        super().__init__(position, space, 3, 1, 'Assets/Items/Sprite-Gold_Coin.webp')
+    def __init__(self, position, space, image) -> None:
+        super().__init__(position, space, 3, 1, image)
 
         
 items_group = pygame.sprite.Group()

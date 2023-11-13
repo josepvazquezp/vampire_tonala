@@ -1,3 +1,4 @@
+from enum import Enum
 import pygame
 from sys import exit
 import math
@@ -35,12 +36,18 @@ batImage = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg')
 skulloneImage = pygame.image.load('Assets/Enemies/Sprite-SKULLNOAURA.jpg')
 reaperImage = pygame.image.load('Assets/Enemies/Sprite-BOSS_XLDEATH.jpg')
 
+knifeImage = pygame.image.load('Assets/Projectiles/navaja.png').convert_alpha()
+
+gemImage = pygame.image.load('Assets/Items/Sprite-Experience_Gem.webp').convert_alpha()
+chickenImage = pygame.image.load('Assets/Items/Sprite-Floor_Chicken.webp').convert_alpha()
+coinImage = pygame.image.load('Assets/Items/Sprite-Gold_Coin.webp').convert_alpha()
+
+chestImage = pygame.image.load('Assets/Items/Sprite-Treasure_Chest.webp').convert_alpha()
+
+items = [gemImage, chickenImage, coinImage, chestImage]
 
 # Create player
-player=Player(100, 5, space)
-bat = Pipeestrello((800,700), batImage, player, space)
-mantis = Mantichana((400,600), mantisImage, player, space)
-skullone = Skullone((200,200), skulloneImage, player, space)
+player=Player(100, 5, space, knifeImage)
 
 
 #reaper = Reaper((800,620), reaperImage, player, space)
@@ -65,17 +72,19 @@ stop_event = Event()
 enemyCooldown = []
 
 def spawn_enemy(player, angle, enemy_type):
+    global items
+
     playerposcoord= convert_coordinates(player.pos)
     ppx=playerposcoord[0]
     ppy=playerposcoord[1]
     x = ppx + SPAWN_RADIUS * math.cos(math.radians(angle))
     y = ppy + SPAWN_RADIUS * math.sin(math.radians(angle))
     if enemy_type == '1':
-        enemy = Pipeestrello((x, y), batImage, player, space)
+        enemy = Pipeestrello((x, y), batImage, player, space, items)
     elif enemy_type == '2':
-        enemy = Skullone((x, y), skulloneImage, player, space)
+        enemy = Skullone((x, y), skulloneImage, player, space, items)
     elif enemy_type == '3':
-        enemy = Mantichana((x, y), mantisImage, player, space)
+        enemy = Mantichana((x, y), mantisImage, player, space, items)
     spawned_enemies.append(enemy)
 
 
@@ -106,7 +115,7 @@ def timer(segundos):
     milis = 0
 
     while playing:
-        if stop_event.isSet():
+        if stop_event.is_set():
             playing = False
 
         milis += 1

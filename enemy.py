@@ -19,7 +19,7 @@ El reeper tiene HP: 600, power: 60, speed: 5
 class Enemy(pygame.sprite.Sprite):
     ENEMIES = []
 
-    def __init__(self, position, hp, speed, power, image, player, space, size):
+    def __init__(self, position, hp, speed, power, image, player, space, size, items):
         super().__init__(enemy_group, all_sprites)
 
         self.hp = hp  # Health points
@@ -47,8 +47,10 @@ class Enemy(pygame.sprite.Sprite):
         self.body.position = position
         self.shape = pymunk.Circle(self.body, size)
         self.shape.collision_type = 2
-        space.add(self.body, self.shape)
         self.space = space
+        space.add(self.body, self.shape)
+
+        self.items = items
 
     # Enemy movement
     def chase_player(self):
@@ -93,18 +95,18 @@ class Enemy(pygame.sprite.Sprite):
         choice = random.randint(0, 100)
 
         if choice >= 0 and choice <= 10:
-            self.chest = Chest((self.position.x, self.position.y), self.space)
+            self.chest = Chest((self.position.x, self.position.y), self.space, self.items[3])
             chest_group.add(self.chest)
             all_sprites.add(self.chest)
             return
         elif choice >= 11 and choice <= 40:
-            self.item = ExperienceGem((self.position.x, self.position.y), self.space)
+            self.item = ExperienceGem((self.position.x, self.position.y), self.space, self.items[0])
 
         elif choice >= 41 and choice <= 70:
-            self.item = FloorChicken((self.position.x, self.position.y), self.space)
+            self.item = FloorChicken((self.position.x, self.position.y), self.space, self.items[1])
 
         elif choice >= 71 and choice <= 100:
-            self.item = GoldCoin((self.position.x, self.position.y), self.space)
+            self.item = GoldCoin((self.position.x, self.position.y), self.space, self.items[2])
         items_group.add(self.item)
         all_sprites.add(self.item)
 
@@ -112,19 +114,19 @@ class Enemy(pygame.sprite.Sprite):
         self.attackCooldown = self.cooldown
 
 class Pipeestrello(Enemy):
-    def __init__(self, position, image, player, space):
-        super().__init__(position, 1, 1.4, 5, image, player, space, 15)
+    def __init__(self, position, image, player, space, items):
+        super().__init__(position, 1, 1.4, 5, image, player, space, 15, items)
 
 class Mantichana(Enemy):
-    def __init__(self, position, image, player, space):
-        super().__init__(position, 150, 0.8, 20, image, player, space, 40)
+    def __init__(self, position, image, player, space, items):
+        super().__init__(position, 150, 0.8, 20, image, player, space, 40, items)
 
 class Reaper(Enemy):
-    def __init__(self, position, image, player, space):
-        super().__init__(position, 600, 5, 60, image, player, space, 40)
+    def __init__(self, position, image, player, space, items):
+        super().__init__(position, 600, 5, 60, image, player, space, 40, items)
 
 class Skullone(Enemy):
-    def __init__(self, position, image, player, space):
-        super().__init__(position, 30, 1, 10, image, player, space, 25)
+    def __init__(self, position, image, player, space, items):
+        super().__init__(position, 30, 1, 10, image, player, space, 25, items)
 
 enemy_group = pygame.sprite.Group()

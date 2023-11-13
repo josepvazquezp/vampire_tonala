@@ -12,10 +12,9 @@ class Chest(pygame.sprite.Sprite):
 
     CHESTS  = []
 
-    def __init__(self, position, space) -> None:
+    def __init__(self, position, space, image) -> None:
         super().__init__()
-        self.image = pygame.image.load('Assets/Items/Sprite-Treasure_Chest.webp')
-        self.image = self.image.convert_alpha()
+        self.image = image
         self.image = pygame.transform.rotozoom(self.image, 0, 1)
         self.rect = self.image.get_rect()
         self.rect.center = position
