@@ -12,6 +12,8 @@ from settings import *
 from player import *
 from projectile import *
 from enemy import *
+import state
+import button
 
 import time
 import threading
@@ -69,6 +71,28 @@ playing = True
 stop_event = Event()
 enemyCooldown = []
 
+surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+
+class Game:
+    def __init__(self) -> None:
+        self.current_state : state.State = state.PlayState(self)
+        self.paused = False
+
+
+    def change_state(self, new_state: state.State):
+        ''' Método que cambia el estado '''
+        self.current_state = new_state
+        print("Se cambió el estado")
+        print(self.current_state.name)
+
+
+    def change_paused(self):
+        ''' Metodo que cambia entre pausa y jugar '''
+        self.paused = not self.paused
+
+
+this_game = Game()
+
 def spawn_enemy(player, angle, enemy_type):
     playerposcoord= convert_coordinates(player.pos)
     ppx=playerposcoord[0]
@@ -114,7 +138,9 @@ def timer(segundos):
         if stop_event.is_set():
             playing = False
 
-        milis += 1
+
+        if not this_game.paused:
+            milis += 1
 
         if(milis == 10):
             milis = 0
@@ -167,6 +193,10 @@ def enemy_hit_player(self, arbiter, space):
         if pygame.Rect.colliderect(player.rect, ene.rect) and ene.attackCooldown == 0:
             player.take_damage(ene.power)
 
+            if player.is_dead():
+                #this_game.current_state.change_to_game_over()
+                pass
+
             ene.restoreCooldown()
             enemyCooldown.append(ene)
             return True
@@ -178,6 +208,12 @@ def player_pick_item(self, arbiter, space):
         if pygame.Rect.colliderect(player.rect, it.rect):
             stat, mod = it.pick_up()
             player.apply_stat(stat, mod)
+
+            if player.able_to_level_up():
+                player.level_up()
+                this_game.change_paused()
+                this_game.current_state.change_to_level_up()
+
             it.destroy()
             return True
     
@@ -187,8 +223,9 @@ def player_pick_chest(self, arbiter, space):
     for che in Chest.CHESTS:
         if pygame.Rect.colliderect(player.rect, che.rect):
             che.open_chest()
+            this_game.change_paused()
+            this_game.current_state.change_to_chest()
             return True
-
     return False
 
 def projectile_hit_enemigo(self, arbiter, space):
@@ -217,6 +254,95 @@ handler2.begin =  projectile_hit_enemigo
 #=========================================================================================================
 
 
+
+#Pantallas
+#=========================================================================================================
+resume_img = pygame.image.load("Assets/buttons/button_resume.png").convert_alpha()
+resume_button = button.Button(WIDTH/2 - resume_img.get_width()/2, 400, resume_img, 1)
+
+open_img = pygame.image.load("Assets/buttons/button_open.png").convert_alpha()
+open_button = button.Button(WIDTH/2 - resume_img.get_width()/2, 500, open_img, 1)
+
+quit_img = pygame.image.load("Assets/buttons/button_quit.png").convert_alpha()
+quit_button = button.Button(WIDTH/2 - resume_img.get_width()/2, 550, quit_img, 1)
+
+treasure_background_img = pygame.image.load("Assets/screens/treasure_background.png").convert_alpha()
+level_up_background_img = pygame.image.load("Assets/screens/level_up_background.png").convert_alpha()
+item_select_img = pygame.image.load("Assets/screens/item_select.png").convert_alpha()
+
+
+title_font = pygame.font.Font(None, 48)
+
+def draw_play_screen():
+    pass
+
+def draw_pause_screen():
+ 
+    pygame.draw.rect(surface, (0, 0, 0, 150), [0,0, WIDTH, HEIGHT])
+    
+    screen.blit(surface, (0,0))
+    pause_text = title_font.render(f'GAME PAUSED', True, (255, 255, 255))
+    screen.blit(pause_text, (WIDTH / 2 - 100, 100))
+    
+
+
+    if resume_button.draw(screen):
+        this_game.current_state.change_to_play()
+        this_game.change_paused()
+
+    if quit_button.draw(screen):
+        stop_event.set()
+        pygame.quit()
+        exit()
+
+
+def draw_chest_screen():
+    
+    screen.blit(surface, (0,0))
+    screen.blit(treasure_background_img, (WIDTH/2 - 175,20))
+
+    if open_button.draw(screen):
+        this_game.current_state.change_to_play()
+        this_game.change_paused()
+
+def draw_level_up_screen():
+    
+    screen.blit(surface, (0,0))
+    screen.blit(level_up_background_img, (WIDTH/2 - 300,20))
+    i = 0
+    for i in range(2):
+        screen.blit(item_select_img, (WIDTH / 2 - 240, 165 * (i+1)))
+
+    #Este botón se va a quitar cuando ya este lista la selección de items
+    if resume_button.draw(screen):
+        this_game.current_state.change_to_play()
+        this_game.change_paused()
+
+def draw_game_over_screen():
+    pygame.draw.rect(surface, (255, 0, 0, 150), [0,0, WIDTH, HEIGHT])
+    screen.blit(surface, (0,0))
+
+    game_over_text = title_font.render(f'GAME OVER', True, (255, 255, 255))
+    screen.blit(game_over_text, (WIDTH / 2 - 100, 100))
+
+    if quit_button.draw(screen):
+        stop_event.set()
+        pygame.quit()
+        exit()
+
+def select_screen(screen_name):
+    if screen_name == "Pause":
+        draw_pause_screen()
+    elif screen_name == "Level":
+        draw_level_up_screen()
+    elif screen_name == "Chest":
+        draw_chest_screen()
+    elif screen_name == "Over":
+        draw_game_over_screen()
+#=========================================================================================================
+
+
+
 while True:
     updateSpawn()
     keys = pygame.key.get_pressed()
@@ -226,9 +352,23 @@ while True:
             pygame.quit()
             exit()
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                if this_game.paused and this_game.current_state.name == "Pause":
+                    this_game.current_state.change_to_play()
+                    
+                elif not this_game.paused and this_game.current_state.name == "Play":
+                    this_game.current_state.change_to_pause()
+                this_game.change_paused()
+
+
     screen.blit(background, (0, 0))
     all_sprites.draw(screen)
-    all_sprites.update()
+
+    if not this_game.paused:
+        all_sprites.update()
+    
+    select_screen(this_game.current_state.name)
 
     for enemy in spawned_enemies:
         if enemy.is_dead():
