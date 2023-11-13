@@ -137,7 +137,7 @@ class Player(pygame.sprite.Sprite):
     def level_up(self):
         ''' Sube de nivel al jugador y establece la nueva meta para el siguiente nivel '''
         self.level += 1
-        self.next_level_xp *= 2
+        self.next_level_xp = int(self.next_level_xp * 1.5)
         print("LEVEL UP")
 
 

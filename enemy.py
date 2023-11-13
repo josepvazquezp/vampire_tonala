@@ -94,19 +94,22 @@ class Enemy(pygame.sprite.Sprite):
 
         choice = random.randint(0, 100)
 
-        if choice >= 0 and choice <= 10:
+        if choice < 50:
+            return
+        elif choice >= 50 and choice <= 76:
+            self.item = ExperienceGem((self.position.x, self.position.y), self.space, self.items[0])
+
+        elif choice >= 77 and choice <= 86:
+            self.item = FloorChicken((self.position.x, self.position.y), self.space, self.items[1])
+
+        elif choice >= 87 and choice <= 97:
+            self.item = GoldCoin((self.position.x, self.position.y), self.space, self.items[2])
+        elif choice >= 98 and choice <= 100:
             self.chest = Chest((self.position.x, self.position.y), self.space, self.items[3])
             chest_group.add(self.chest)
             all_sprites.add(self.chest)
             return
-        elif choice >= 11 and choice <= 40:
-            self.item = ExperienceGem((self.position.x, self.position.y), self.space, self.items[0])
 
-        elif choice >= 41 and choice <= 70:
-            self.item = FloorChicken((self.position.x, self.position.y), self.space, self.items[1])
-
-        elif choice >= 71 and choice <= 100:
-            self.item = GoldCoin((self.position.x, self.position.y), self.space, self.items[2])
         items_group.add(self.item)
         all_sprites.add(self.item)
 
