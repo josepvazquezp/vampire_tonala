@@ -44,7 +44,7 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.x = (self.x)
         self.rect.y = (self.y)
         self.body.position = self.x, self.y
-        if pygame.time.get_ticks() -self.spawn_time > self.projectile_lifetime:
+        if pygame.time.get_ticks() - self.spawn_time > self.projectile_lifetime:
             self.destroy_projectile()
 
 

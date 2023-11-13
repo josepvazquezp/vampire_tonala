@@ -76,7 +76,6 @@ class Enemy(pygame.sprite.Sprite):
         return (player_vector - enemy_vector).magnitude()
 
     def update(self):
-        
         self.chase_player()
 
     def take_damage(self, damage: int):
@@ -117,8 +116,10 @@ class Enemy(pygame.sprite.Sprite):
         self.attackCooldown = self.cooldown
 
 class Pipeestrello(Enemy):
-    def __init__(self, position, image, player, space, items):
-        super().__init__(position, 1, 1.4, 5, image, player, space, 15, items)
+    IMAGE = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg')
+
+    def __init__(self, position, player, space, items):
+        super().__init__(position, 1, 1.4, 5, Pipeestrello.IMAGE, player, space, 15, items)
 
 class Mantichana(Enemy):
     def __init__(self, position, image, player, space, items):

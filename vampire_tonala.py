@@ -33,7 +33,7 @@ clock = pygame.time.Clock()
 background = pygame.transform.scale(pygame.image.load('Background/background.jpg').convert(), (WIDTH, HEIGHT))
 
 mantisImage = pygame.image.load('Assets/Enemies/Sprite-XLMANTIS.jpg')
-batImage = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg')
+# batImage = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg')
 skulloneImage = pygame.image.load('Assets/Enemies/Sprite-SKULLNOAURA.jpg')
 reaperImage = pygame.image.load('Assets/Enemies/Sprite-BOSS_XLDEATH.jpg')
 
@@ -49,8 +49,6 @@ items = [gemImage, chickenImage, coinImage, chestImage]
 
 # Create player
 player=Player(100, 5, space, knifeImage)
-
-
 #reaper = Reaper((800,620), reaperImage, player, space)
 
 #Spawn variables
@@ -63,7 +61,6 @@ current_enemy_types = [1]  # List to keep track of current enemy types
 
 
 all_sprites.add(player)
-
 
 gameSeconds = 0
 gameMin = 0
@@ -81,7 +78,7 @@ def spawn_enemy(player, angle, enemy_type):
     x = ppx + SPAWN_RADIUS * math.cos(math.radians(angle))
     y = ppy + SPAWN_RADIUS * math.sin(math.radians(angle))
     if enemy_type == 1:
-        enemy = Pipeestrello((x, y), batImage, player, space, items)
+        enemy = Pipeestrello((x, y), player, space, items)
     elif enemy_type == 2:
         enemy = Skullone((x, y), skulloneImage, player, space, items)
     elif enemy_type == 3:
@@ -110,15 +107,6 @@ def get_current_enemy_types(game_seconds):
                 types.append(ENEMY_TYPES[i])
     return types
 
-'''
-def detectar_colision(p : Player, e: Enemy, flag: bool) -> bool:
-    global flagC
-
-    if pygame.Rect.colliderect(p.rect, e.rect) and flag:
-        p.take_damage(e.power)
-        flagC = False
-'''
-
 def timer(segundos):
     global gameSeconds, gameMin, playing, current_enemy_types,max_enemies
     milis = 0
@@ -141,7 +129,7 @@ def timer(segundos):
                 max_enemies += 2
                 maxenemy_spawn_control = 0
 
-            if current_enemy_types!= ENEMY_TYPES:
+            if current_enemy_types != ENEMY_TYPES:
                 current_enemy_types = get_current_enemy_types(gameSeconds)
             
             
@@ -183,7 +171,9 @@ def enemy_hit_player(self, arbiter, space):
 
             ene.restoreCooldown()
             enemyCooldown.append(ene)
-    return True
+            return True
+        
+    return False
 
 def player_pick_item(self, arbiter, space):
     for it in Item.ITEMS:
@@ -191,21 +181,28 @@ def player_pick_item(self, arbiter, space):
             stat, mod = it.pick_up()
             player.apply_stat(stat, mod)
             it.destroy()
-    return True
+            return True
+    
+    return False
 
 def player_pick_chest(self, arbiter, space):
     for che in Chest.CHESTS:
         if pygame.Rect.colliderect(player.rect, che.rect):
             che.open_chest()
-            
-    return True
+            return True
+
+    return False
 
 def projectile_hit_enemigo(self, arbiter, space):
     for proj in Projectile.PROJECTILES:
         for ene in Enemy.ENEMIES:
             if pygame.Rect.colliderect(proj.rect, ene.rect):
-                ene.take_damage(proj.damage)
-    return True
+                temp = proj.damage
+                proj.destroy_projectile()
+                ene.take_damage(temp)
+                return True
+    
+    return False
 
 handler = space.add_collision_handler(1, 2)
 handler.pre_solve =  enemy_hit_player
