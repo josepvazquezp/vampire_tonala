@@ -44,6 +44,12 @@ class Player(pygame.sprite.Sprite):
         ''' '''
         self.hp -= damage
 
+    def is_dead(self):
+        if self.hp > 0:
+            return False
+        return True
+
+
     def player_rotate(self):
         keys = pygame.key.get_pressed()
         if(keys[pygame.K_a]):
@@ -130,8 +136,14 @@ class Player(pygame.sprite.Sprite):
             Si la experiencia actual (current_xp) iguala o supera a la experiencia
             para el siguiente nivel (nex_level_xp) sube de nivel'''
         self.curren_xp += xp
+        
+
+
+    def able_to_level_up(self):
+        '''  '''
         if(self.curren_xp >= self.next_level_xp):
-            self.level_up()
+            return True
+        return False
         
 
     def level_up(self):
