@@ -5,13 +5,13 @@ from Camera import *
 from settings import *
 from projectile import *
 import pymunk
-
+from weapon import * 
 
 def convert_coordinates(point):
         return int(point[0]), (int(point[1]))
 
 class Player(pygame.sprite.Sprite):
-    KNIFE_IMAGE = pygame.image.load('Assets/Projectiles/navaja.png')
+    Weapons = []
 
     def __init__(self, hp, speed, space):
         super().__init__()
@@ -22,8 +22,6 @@ class Player(pygame.sprite.Sprite):
         self.base_player_image = self.image
         self.hitbox_rect = self.base_player_image.get_rect(center=self.pos)
         self.rect = self.hitbox_rect.copy()
-        self.use_weapon=False
-        self.weapon_cooldown=0
         self.current_direction = 0
 
         self.hp = hp
@@ -40,6 +38,8 @@ class Player(pygame.sprite.Sprite):
 
         self.space = space
         space.add(self.body, self.shape)
+
+        Player.Weapons.append(Knife())
 
     def take_damage(self, damage: int):
         ''' '''
@@ -86,34 +86,15 @@ class Player(pygame.sprite.Sprite):
             self.velocity_x /= math.sqrt(2)
             self.velocity_y /= math.sqrt(2)
 
-        '''
-        if keys[pygame.K_SPACE]:
-            self.use_weapon=True
-            self.using_weapon()
-        else:
-            self.use_weapon=False
-        '''
-
     def using_weapon(self):
-        #keys = pygame.key.get_pressed()
-        if self.weapon_cooldown == 0:
-            self.weapon_cooldown = 10
-            spawn_projectile = self.pos
+        for weapon in Player.Weapons:
+            if weapon.actual_cooldown == 0:
+                weapon.actual_cooldown = weapon.cooldown
+                spawn_projectile = self.pos
 
-            '''
-            if keys[pygame.K_d]:
-                self.current_direction = 0
-            elif keys[pygame.K_a]:
-                self.current_direction = 180
-            elif keys[pygame.K_w]:
-                self.current_direction = 270
-            elif keys[pygame.K_s]:
-                self.current_direction = 90
-            '''
-
-            self.projectile = Projectile(spawn_projectile[0],spawn_projectile[1],self.current_direction, self.space, Player.KNIFE_IMAGE)
-            projectile_group.add(self.projectile)
-            all_sprites.add(self.projectile)
+                projectile = weapon.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space)
+                projectile_group.add(projectile)
+                all_sprites.add(projectile)
 
     
     def move(self):
@@ -173,7 +154,7 @@ class Player(pygame.sprite.Sprite):
         self.player_rotate()
 
 
-
-        if self.weapon_cooldown > 0:
-            self.weapon_cooldown -= 1
+        for weapon in Player.Weapons:
+            if weapon.actual_cooldown > 0:
+                weapon.actual_cooldown -= 1
 
