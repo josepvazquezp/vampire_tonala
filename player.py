@@ -1,9 +1,11 @@
 from __future__ import annotations
 import pygame
 import math
+from Camera import *
 from settings import *
 from projectile import *
 import pymunk
+
 
 def convert_coordinates(point):
         return int(point[0]), (int(point[1]))
@@ -174,4 +176,4 @@ class Player(pygame.sprite.Sprite):
 
         if self.weapon_cooldown > 0:
             self.weapon_cooldown -= 1
-all_sprites = pygame.sprite.Group()
+

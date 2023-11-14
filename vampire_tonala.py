@@ -5,6 +5,7 @@ from sys import exit
 import math
 
 import pymunk
+from Camera import *
 from chest import Chest
 from item import Item
 
@@ -27,13 +28,11 @@ space = pymunk.Space()
 space.gravity = (0, 0)
 
 # Create the screen
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
 pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
 
-# Load images
 background = pygame.transform.scale(pygame.image.load('Background/background.jpg').convert(), (WIDTH, HEIGHT))
-
 # mantisImage = pygame.image.load('Assets/Enemies/Sprite-XLMANTIS.jpg')
 # batImage = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg')
 # skulloneImage = pygame.image.load('Assets/Enemies/Sprite-SKULLNOAURA.jpg')
@@ -52,7 +51,6 @@ background = pygame.transform.scale(pygame.image.load('Background/background.jpg
 # Create player
 player = Player(100, 5, space)
 #reaper = Reaper((800,620), reaperImage, player, space)
-
 #Spawn variables
 
 SPAWN_RADIUS = 600  # radius around the player within which enemies will spawn
@@ -364,9 +362,6 @@ while True:
 
     screen.blit(background, (0, 0))
     all_sprites.draw(screen)
-
-    if not this_game.paused:
-        all_sprites.update()
     
     select_screen(this_game.current_state.name)
 
@@ -417,6 +412,12 @@ while True:
     hp_text = font.render(f'Current Enemy Types: {current_enemy_types}', True, (255, 255, 255))
     screen.blit(hp_text, (1000, 70))
 
+
+    if not this_game.paused:
+        all_sprites.update()
+        
+    all_sprites.custom_draw(player)
+    all_sprites.time_draw(gameMin, gameSeconds)
     pygame.display.update()
     clock.tick(FPS)
     space.step(1 / FPS)
