@@ -360,10 +360,8 @@ while True:
                 this_game.change_paused()
 
 
-    screen.blit(background, (0, 0))
-    all_sprites.draw(screen)
-    
-    select_screen(this_game.current_state.name)
+    # screen.blit(background, (0, 0))
+    # all_sprites.draw(screen)
 
     for enemy in spawned_enemies:
         if enemy.is_dead():
@@ -376,6 +374,13 @@ while True:
             current_angle += angle_increment
             if current_angle >= 360:
                 current_angle = 0
+
+    if not this_game.paused:
+        all_sprites.update()
+
+    all_sprites.custom_draw(player)
+
+    select_screen(this_game.current_state.name)
 
     # Toda esta madre sirve para hacer un display bien sencillo del HP del cabron
     font = pygame.font.Font(None, 36)
@@ -412,12 +417,6 @@ while True:
     hp_text = font.render(f'Current Enemy Types: {current_enemy_types}', True, (255, 255, 255))
     screen.blit(hp_text, (1000, 70))
 
-
-    if not this_game.paused:
-        all_sprites.update()
-        
-    all_sprites.custom_draw(player)
-    all_sprites.time_draw(gameMin, gameSeconds)
     pygame.display.update()
     clock.tick(FPS)
     space.step(1 / FPS)
