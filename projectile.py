@@ -7,9 +7,9 @@ import pymunk
 class Projectile(pygame.sprite.Sprite):
     PROJECTILES = []
 
-    def __init__(self,x,y,angle, space):
+    def __init__(self,x,y,angle, space, image):
         super().__init__()
-        self.image = pygame.image.load('Assets/Projectiles/navaja.png').convert_alpha()
+        self.image = image
         if(angle != 0):
             self.image = pygame.transform.rotate(self.image, angle)
             if(angle == 270 or angle == 90):
@@ -32,8 +32,9 @@ class Projectile(pygame.sprite.Sprite):
         self.body.position = self.x, self.y
         self.shape = pymunk.Circle(self.body, 10) #El segundo valor es el radio del cuerpo
         self.shape.collision_type = 3
+        self.space = space
         space.add(self.body, self.shape)
-
+        
         Projectile.PROJECTILES.append(self)
         
 
@@ -43,11 +44,12 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.x = (self.x)
         self.rect.y = (self.y)
         self.body.position = self.x, self.y
-        if pygame.time.get_ticks() -self.spawn_time > self.projectile_lifetime:
+        if pygame.time.get_ticks() - self.spawn_time > self.projectile_lifetime:
             self.destroy_projectile()
 
 
     def destroy_projectile(self):
+        self.space.remove(self.body, self.shape)
         Projectile.PROJECTILES.remove(self)
         self.kill()
     
