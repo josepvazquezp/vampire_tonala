@@ -7,13 +7,15 @@ import pymunk
 class Projectile(pygame.sprite.Sprite):
     PROJECTILES = []
 
-    def __init__(self,x,y,angle, space, image):
+    def __init__(self,x:float, y:float, angle:int, space, image):
         super().__init__()
         self.image = image
+
         if(angle != 0):
             self.image = pygame.transform.rotate(self.image, angle)
             if(angle == 270 or angle == 90):
-                self.image = pygame.transform.flip(self.image,False,True)
+                self.image = pygame.transform.flip(self.image, False, True)
+
         self.image = pygame.transform.rotozoom(self.image,0,.25)
         self.rect = self.image.get_rect()
         self.rect.center = (x,y)

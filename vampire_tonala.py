@@ -90,6 +90,7 @@ class Game:
 
 
 this_game = Game()
+fact_enemy = FactoryEnemy()
 
 def spawn_enemy(player, angle, enemy_type):
     playerposcoord= convert_coordinates(player.pos)
@@ -98,11 +99,11 @@ def spawn_enemy(player, angle, enemy_type):
     x = ppx + SPAWN_RADIUS * math.cos(math.radians(angle))
     y = ppy + SPAWN_RADIUS * math.sin(math.radians(angle))
     if enemy_type == 1:
-        enemy = Pipeestrello((x, y), player, space)
+        enemy = fact_enemy.create_enemy((x, y), player, space, FactoryEnemy.EnemyCatalog.PIPEESTRELLO) 
     elif enemy_type == 2:
-        enemy = Skullone((x, y), player, space)
+        enemy = fact_enemy.create_enemy((x, y), player, space, FactoryEnemy.EnemyCatalog.SKULLONE) 
     elif enemy_type == 3:
-        enemy = Mantichana((x, y), player, space)
+        enemy = fact_enemy.create_enemy((x, y), player, space, FactoryEnemy.EnemyCatalog.MANTICHANA)
     spawned_enemies.append(enemy)
 
 #Spawn variables
