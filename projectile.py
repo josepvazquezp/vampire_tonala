@@ -56,7 +56,7 @@ class Projectile(pygame.sprite.Sprite, ABC):
 class KnifeProjectile(Projectile):
     IMAGE = pygame.transform.rotozoom(pygame.image.load('Assets/Projectiles/navaja.png'), 0, .25)
 
-    def __init__(self, x:float, y:float, angle:int, space) -> None:
+    def __init__(self, x:float, y:float, angle:int, space, tier:int) -> None:
         image = KnifeProjectile.IMAGE
 
         if(angle != 0):
@@ -79,7 +79,7 @@ class KnifeProjectile(Projectile):
 class MagicWandProjectile(Projectile):
     IMAGE = pygame.image.load('Assets/Projectiles/magic_wand_projectile.png')
 
-    def __init__(self, x:float, y:float, angle:int, space) -> None:
+    def __init__(self, x:float, y:float, angle:int, space, tier:int) -> None:
         super().__init__(x, y, angle, 10, 10, space, MagicWandProjectile.IMAGE)
     
     def projectile_movement(self):
@@ -102,7 +102,7 @@ class MagicWandProjectile(Projectile):
 class FireWandProjectile(Projectile):
     IMAGE = pygame.image.load('Assets/Projectiles/fire_wand_projectile.png')
 
-    def __init__(self, x:float, y:float, angle:int, space, player) -> None:
+    def __init__(self, x:float, y:float, angle:int, space, player, tier:int) -> None:
         super().__init__(x, y, angle, 7.5, 20, space, FireWandProjectile.IMAGE)
         
 

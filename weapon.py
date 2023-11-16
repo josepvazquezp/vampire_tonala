@@ -27,7 +27,7 @@ class SpecificWeapon(ABC):
         ''' Crea una weapon en especifico y retorna ese objeto'''
         pass
     
-    def create_projectile(self, x:float, y:float, direction:int, space, player) -> Projectile:
+    def create_projectile(self, x:float, y:float, direction:int, space, player, tier:int) -> Projectile:
         pass
 
 class Knife(SpecificWeapon):
@@ -36,7 +36,7 @@ class Knife(SpecificWeapon):
     def create(self) -> Weapon:
         return Weapon(5, 10, Knife.IMAGE, "knife", FactoryWeapon.WeaponCatalog.KNIFE)
     
-    def create_projectile(self, x:float, y:float, direction:int, space, player) -> Projectile:
+    def create_projectile(self, x:float, y:float, direction:int, space, player, tier:int) -> Projectile:
         return KnifeProjectile(x, y, direction, space)
 
 class MagicWand(SpecificWeapon):
@@ -45,7 +45,7 @@ class MagicWand(SpecificWeapon):
     def create(self) -> Weapon:
         return Weapon(5, 12, MagicWand.IMAGE, "magic_wand", FactoryWeapon.WeaponCatalog.MAGIC_WAND)
     
-    def create_projectile(self, x:float, y:float, direction:int, space, player) -> Projectile:
+    def create_projectile(self, x:float, y:float, direction:int, space, player, tier:int) -> Projectile:
         return MagicWandProjectile(x, y, direction, space)
     
 class FireWand(SpecificWeapon):
@@ -54,7 +54,7 @@ class FireWand(SpecificWeapon):
     def create(self) -> Weapon:
         return Weapon(5, 30, FireWand.IMAGE, "fire_wand", FactoryWeapon.WeaponCatalog.FIRE_WAND)
     
-    def create_projectile(self, x:float, y:float, direction:int, space, player) -> Projectile:
+    def create_projectile(self, x:float, y:float, direction:int, space, player, tier:int) -> Projectile:
         angle = 0
 
         if(len(Enemy.ENEMIES) > 0):

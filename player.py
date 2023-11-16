@@ -13,6 +13,7 @@ def convert_coordinates(point):
 
 class Player(pygame.sprite.Sprite):
     Weapons = []
+    FACT_WEAPON = FactoryWeapon()
 
     def __init__(self, hp, speed, space):
         super().__init__()
@@ -91,13 +92,22 @@ class Player(pygame.sprite.Sprite):
                 weapon.actual_cooldown = weapon.cooldown
                 spawn_projectile = self.pos
                 
-                projectile = weapon.type.value.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space, self.get_player_hitbox_rect())
+                projectile = weapon.type.value.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space, self.get_player_hitbox_rect(), weapon.tier)
                 projectile_group.add(projectile)
                 all_sprites.add(projectile)
 
     def equip_weapon(self, weapon):
-        if(weapon != None):
-            Player.Weapons.append(weapon)
+        flag = False
+
+        for w in Player.Weapons:
+            if(weapon == w.type):
+                w.upgrade_weapon()
+                flag = True
+                print(w.tier)
+                break
+
+        if(weapon != None and not flag):
+            Player.Weapons.append(Player.FACT_WEAPON.create_weapon(weapon))
     
     def move(self):
         self.pos += pygame.math.Vector2(self.velocity_x,self.velocity_y)

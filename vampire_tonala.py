@@ -52,10 +52,10 @@ background = pygame.transform.scale(pygame.image.load('Background/background.jpg
 player = Player(100, 5, space)
 #reaper = Reaper((800,620), reaperImage, player, space)
 #Spawn variables
-fact_weapon = FactoryWeapon()
-player.equip_weapon(fact_weapon.create_weapon(fact_weapon.WeaponCatalog.KNIFE))
-player.equip_weapon(fact_weapon.create_weapon(fact_weapon.WeaponCatalog.MAGIC_WAND))
-player.equip_weapon(fact_weapon.create_weapon(fact_weapon.WeaponCatalog.FIRE_WAND))
+
+player.equip_weapon(FactoryWeapon.WeaponCatalog.KNIFE)
+player.equip_weapon(FactoryWeapon.WeaponCatalog.MAGIC_WAND)
+player.equip_weapon(FactoryWeapon.WeaponCatalog.FIRE_WAND)
 
 SPAWN_RADIUS = 600  # radius around the player within which enemies will spawn
 spawned_enemies = []  # List to keep track of spawned enemies
