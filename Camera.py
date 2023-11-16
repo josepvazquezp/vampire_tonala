@@ -27,17 +27,22 @@ class CameraGroup(pygame.sprite.Group):
         self.offset.y= HEIGHT/2 - target.body.position[1]
 
 
-    def custom_draw(self,player):
-
+    def custom_draw(self, player):
         self.center_target_camera(player)
 
-        #background
-        ground_offset= self.background_rect.topleft + self.offset
-        self.display_surface.blit(self.background, ground_offset)
+        # Calcular el offset del fondo
+        background_width, background_height = self.background.get_size()
+        top_left_x = (self.background_rect.left + self.offset.x) % background_width
+        top_left_y = (self.background_rect.top + self.offset.y) % background_height
 
-        #Esto nos permite hacer draw a elementos unos sobre otro dependiendo de su posicion en y
-        for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery):
-            offset_position = sprite.rect.topleft+self.offset
+        # Dibujar el fondo repetido
+        for x in range(-background_width, WIDTH + background_width, background_width):
+            for y in range(-background_height, HEIGHT + background_height, background_height):
+                self.display_surface.blit(self.background, (x + top_left_x, y + top_left_y))
+
+        # Dibujar sprites
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
+            offset_position = sprite.rect.topleft + self.offset
             self.display_surface.blit(sprite.image, offset_position)
 
 all_sprites = CameraGroup()
