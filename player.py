@@ -14,7 +14,7 @@ def convert_coordinates(point):
 class Player(pygame.sprite.Sprite):
     Weapons = []
     Equipment = []
-    MAX_CAPACITTY = 2
+    MAX_CAPACITTY = 5
 
     def __init__(self, hp, speed, space):
         super().__init__()
@@ -27,11 +27,11 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.hitbox_rect.copy()
         self.current_direction = 0
 
-        self.hp = hp
-        self.max_hp = self.hp
-        self.armor = 0
-        self.move_speed = 1
-        self.attack = 1
+        self.hp:int = hp
+        self.max_hp:int = self.hp
+        self.armor:float = 0.0
+        self.move_speed:float = 1.0
+        self.attack:float = 1.0
         
         self.level: int = 0
         self.curren_xp: int = 0
@@ -120,7 +120,8 @@ class Player(pygame.sprite.Sprite):
         elif issubclass(type(item), Weapon):
             print("Es arma")
         else:
-            stat, modifier = item.get_effect()
+            stat, modifier = item.pick_up()
+            item.destroy()
             self.apply_stat(stat, modifier)
 
         
@@ -141,13 +142,13 @@ class Player(pygame.sprite.Sprite):
         elif(stat == 3):
             self.earn_gold(modif)
         elif(stat == 4): #Armor
-            self.armor += modif
+            self.armor = round(self.armor + modif, 1)
         elif(stat == 5): #Max Healt
-            self.max_hp += self.max_hp * modif
+            self.max_hp = int(self.max_hp + (self.max_hp * modif))
         elif(stat == 6): #Attack
-            self.attack += modif
+            self.attack = round(self.attack + modif, 1)
         elif(stat == 7): #Wings
-            self.move_speed += modif
+            self.move_speed = round(self.move_speed + modif, 1)
         
 
 

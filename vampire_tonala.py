@@ -87,6 +87,10 @@ class Game:
 
         self.equipment_available = [equipment.Armor(), equipment.HollowHeart(), equipment.Spinach(), equipment.Wings()]
 
+        self.chest = None
+        self.chest_open = False
+        self.chest_item = None
+
 
     def change_state(self, new_state: state.State):
         ''' Método que cambia el estado '''
@@ -235,9 +239,8 @@ def player_pick_item(self, arbiter, space):
 def player_pick_chest(self, arbiter, space):
     for che in Chest.CHESTS:
         if pygame.Rect.colliderect(player.rect, che.rect):
-            che.open_chest()
-            this_game.change_paused()
-            this_game.current_state.change_to_chest()
+            this_game.chest = che
+            prepare_chest()
             return True
     return False
 
@@ -303,7 +306,6 @@ def prepare_level_up():
     this_game.change_paused()
     this_game.current_state.change_to_level_up()
 
-    #TODO: Preparar los items que se dan en el level up
     this_game.selected_item_display = []
 
     for i in player.Weapons:
@@ -370,7 +372,44 @@ def prepare_level_up():
             temp_poll.remove(this_game.selected_item_display[i])
         
 
+def prepare_chest():
+    this_game.change_paused()
+    this_game.current_state.change_to_chest()
+    
+def get_chest_item():
+    items_to_chest = []
+    for i in player.Weapons:
+        items_to_chest.append(i)
+    for i in player.Equipment:
+        items_to_chest.append(i)
+
+
+    selected_items = []
+
+    for i in items_to_chest:
+        print(f"Objeto: {i.name} Tier: {i.tier}")
+        if i.tier != i.max_tier:
+            selected_items.append(i)
+
+    if selected_items == []:
+        selected_items = [GoldCoin((player.pos.x + 100, player.pos.y + 100), space, Enemy.COIN_IMAGE), FloorChicken((player.pos.x + 100, player.pos.y + 100), space, Enemy.CHICKEN_IMAGE)]
+    
+
+    print("Selected")
+    print(selected_items)
+
+    this_game.chest_item = this_game.chest.open_chest(selected_items)
+    this_game.chest.destroy()
+    this_game.chest_open = True
+
+
+def add_chest_item():
+    player.add_item(this_game.chest_item)
+    this_game.chest_open = False
+
+
 def draw_play_screen():
+
     pass
 
 def draw_pause_screen():
@@ -406,9 +445,18 @@ def draw_chest_screen():
     screen.blit(surface, (0,0))
     screen.blit(treasure_background_img, (WIDTH/2 - 175,20))
 
-    if open_button.draw(screen):
-        this_game.current_state.change_to_play()
-        this_game.change_paused()
+    if not this_game.chest_open:
+        if open_button.draw(screen):
+            get_chest_item()
+
+    if this_game.chest_open:
+
+        screen.blit(this_game.chest_item.image, (WIDTH / 2 - this_game.chest_item.image.get_width()/ 2, 250))
+        if resume_button.draw(screen):
+            add_chest_item()
+            this_game.current_state.change_to_play()
+            this_game.change_paused()
+
 
 def draw_level_up_screen():
     
