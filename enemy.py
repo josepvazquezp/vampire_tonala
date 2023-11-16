@@ -76,8 +76,10 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.centerx = self.position.x
         self.rect.centery = self.position.y
         self.body.position = self.position.x, self.position.y
+
     def is_dead(self):
         return self.hp <= 0
+    
     def get_vector_distance(self, player_vector, enemy_vector):
         return (player_vector - enemy_vector).magnitude()
 
@@ -120,6 +122,9 @@ class Enemy(pygame.sprite.Sprite):
 
     def restoreCooldown(self):
         self.attackCooldown = self.cooldown
+
+    def get_enemy_hitbox_rect(self):
+        return self.rect
 
 # 1.- Interface para enemies
 class SpecificEnemy(ABC):

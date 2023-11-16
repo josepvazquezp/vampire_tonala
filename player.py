@@ -6,6 +6,7 @@ from settings import *
 from projectile import *
 import pymunk
 from weapon import * 
+from enemy import Enemy
 
 def convert_coordinates(point):
         return int(point[0]), (int(point[1]))
@@ -40,6 +41,8 @@ class Player(pygame.sprite.Sprite):
         space.add(self.body, self.shape)
 
         Player.Weapons.append(Knife())
+        Player.Weapons.append(MagicWand())
+        Player.Weapons.append(FireWand())
 
     def take_damage(self, damage: int):
         ''' '''
@@ -91,8 +94,8 @@ class Player(pygame.sprite.Sprite):
             if weapon.actual_cooldown == 0:
                 weapon.actual_cooldown = weapon.cooldown
                 spawn_projectile = self.pos
-
-                projectile = weapon.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space)
+                
+                projectile = weapon.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space, self.get_player_hitbox_rect())
                 projectile_group.add(projectile)
                 all_sprites.add(projectile)
 
