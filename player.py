@@ -40,10 +40,6 @@ class Player(pygame.sprite.Sprite):
         self.space = space
         space.add(self.body, self.shape)
 
-        # Player.Weapons.append(Knife())
-        # Player.Weapons.append(MagicWand())
-        # Player.Weapons.append(FireWand())
-
     def take_damage(self, damage: int):
         ''' '''
         self.hp -= damage
@@ -95,7 +91,7 @@ class Player(pygame.sprite.Sprite):
                 weapon.actual_cooldown = weapon.cooldown
                 spawn_projectile = self.pos
                 
-                projectile = weapon.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space, self.get_player_hitbox_rect())
+                projectile = weapon.type.value.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space, self.get_player_hitbox_rect())
                 projectile_group.add(projectile)
                 all_sprites.add(projectile)
 

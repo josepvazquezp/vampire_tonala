@@ -21,9 +21,6 @@ class Weapon(ABC):
         if(self.tier != self.max_tier):
             self.tier += 1
 
-    def create_projectile(self, x:float, y:float, direction:int, space, player) -> Projectile:
-        return self.type.value.create_projectile(x, y, direction, space, player)
-
 # 1.- Interface para weapons
 class SpecificWeapon(ABC):
     def create(self) -> Weapon:
