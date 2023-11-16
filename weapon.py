@@ -37,16 +37,16 @@ class Knife(SpecificWeapon):
         return Weapon(5, 10, Knife.IMAGE, "knife", FactoryWeapon.WeaponCatalog.KNIFE)
     
     def create_projectile(self, x:float, y:float, direction:int, space, player, tier:int) -> Projectile:
-        return KnifeProjectile(x, y, direction, space)
+        return KnifeProjectile(x, y, direction, space, tier)
 
 class MagicWand(SpecificWeapon):
     IMAGE = pygame.image.load('Assets/Weapons/Sprite-Magic_Wand.png')
 
     def create(self) -> Weapon:
-        return Weapon(5, 12, MagicWand.IMAGE, "magic_wand", FactoryWeapon.WeaponCatalog.MAGIC_WAND)
+        return Weapon(5, 20, MagicWand.IMAGE, "magic_wand", FactoryWeapon.WeaponCatalog.MAGIC_WAND)
     
     def create_projectile(self, x:float, y:float, direction:int, space, player, tier:int) -> Projectile:
-        return MagicWandProjectile(x, y, direction, space)
+        return MagicWandProjectile(x, y, direction, space, tier)
     
 class FireWand(SpecificWeapon):
     IMAGE = pygame.image.load('Assets/Weapons/Sprite-Fire_Wand.png')
@@ -67,7 +67,7 @@ class FireWand(SpecificWeapon):
             if(div != 0):
                 angle = math.degrees(math.atan(mul / div))
                 
-        return [FireWandProjectile(x, y, angle - 20, space, player), FireWandProjectile(x, y, angle, space, player), FireWandProjectile(x, y, angle + 20, space, player)]
+        return [FireWandProjectile(x, y, angle - 20, space, player, tier), FireWandProjectile(x, y, angle, space, player, tier), FireWandProjectile(x, y, angle + 20, space, player, tier)]
     
 class FactoryWeapon():
     class WeaponCatalog(Enum):
