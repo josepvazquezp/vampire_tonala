@@ -2,6 +2,7 @@ from __future__ import annotations
 import pygame
 import math
 from Camera import *
+from equipment import Equipment
 from settings import *
 from projectile import *
 import pymunk
@@ -12,6 +13,8 @@ def convert_coordinates(point):
 
 class Player(pygame.sprite.Sprite):
     Weapons = []
+    Equipment = []
+    MAX_CAPACITTY = 2
 
     def __init__(self, hp, speed, space):
         super().__init__()
@@ -26,10 +29,15 @@ class Player(pygame.sprite.Sprite):
 
         self.hp = hp
         self.max_hp = self.hp
+        self.armor = 0
+        self.move_speed = 1
+        self.attack = 1
+        
         self.level: int = 0
         self.curren_xp: int = 0
         self.next_level_xp = 100
         self.gold = 0
+        
 
         self.body = pymunk.Body(1, 100)
         self.body.position = convert_coordinates(self.pos)
@@ -96,6 +104,27 @@ class Player(pygame.sprite.Sprite):
                 projectile_group.add(projectile)
                 all_sprites.add(projectile)
 
+    def add_item(self, item):
+        if issubclass(type(item), Equipment):
+            print("Es equipamiento")
+            if item in Player.Equipment:
+                index = Player.Equipment.index(item)
+                if Player.Equipment[index].upgrade_equipment():
+                    stat, modifier = item.get_effect()
+                    self.apply_stat(stat, modifier)
+            else:
+                Player.Equipment.append(item)
+                stat, modifier = item.get_effect()
+                self.apply_stat(stat, modifier)
+
+        elif issubclass(type(item), Weapon):
+            print("Es arma")
+        else:
+            stat, modifier = item.get_effect()
+            self.apply_stat(stat, modifier)
+
+        
+
     
     def move(self):
         self.pos += pygame.math.Vector2(self.velocity_x,self.velocity_y)
@@ -111,6 +140,15 @@ class Player(pygame.sprite.Sprite):
             self.heal(modif)
         elif(stat == 3):
             self.earn_gold(modif)
+        elif(stat == 4): #Armor
+            self.armor += modif
+        elif(stat == 5): #Max Healt
+            self.max_hp += self.max_hp * modif
+        elif(stat == 6): #Attack
+            self.attack += modif
+        elif(stat == 7): #Wings
+            self.move_speed += modif
+        
 
 
     def gain_xp(self, xp: int):
@@ -131,7 +169,7 @@ class Player(pygame.sprite.Sprite):
     def level_up(self):
         ''' Sube de nivel al jugador y establece la nueva meta para el siguiente nivel '''
         self.level += 1
-        self.next_level_xp = int(self.next_level_xp * 1.5)
+        self.next_level_xp += 150 
         print("LEVEL UP")
 
 

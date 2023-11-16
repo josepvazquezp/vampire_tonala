@@ -3,6 +3,8 @@ from random import choice
 import pygame
 from sys import exit
 import math
+import random
+import copy
 
 import pymunk
 from Camera import *
@@ -15,6 +17,8 @@ from projectile import *
 from enemy import *
 import state
 import button
+import equipment
+import weapon
 
 import time
 import threading
@@ -72,21 +76,32 @@ enemyCooldown = []
 surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
 class Game:
+    
     def __init__(self) -> None:
         self.current_state : state.State = state.PlayState(self)
         self.paused = False
+        self.selected_item_display = []
+        self.level_item_display = [equipment.Armor(), equipment.HollowHeart(), equipment.Spinach(), equipment.Wings(), weapon.Knife()]
+        self.cleaned_weapons : bool = False
+        self.cleaned_equipment : bool = False
+
+        self.equipment_available = [equipment.Armor(), equipment.HollowHeart(), equipment.Spinach(), equipment.Wings()]
 
 
     def change_state(self, new_state: state.State):
         ''' Método que cambia el estado '''
         self.current_state = new_state
-        print("Se cambió el estado")
-        print(self.current_state.name)
 
 
     def change_paused(self):
         ''' Metodo que cambia entre pausa y jugar '''
         self.paused = not self.paused
+
+    def clean_weapons(self):
+        self.cleaned_weapons = True
+
+    def clean_equipment(self):
+        self.cleaned_equipment = True
 
 
 this_game = Game()
@@ -193,7 +208,8 @@ def enemy_hit_player(self, arbiter, space):
             player.take_damage(ene.power)
 
             if player.is_dead():
-                #this_game.current_state.change_to_game_over()
+                # this_game.current_state.change_to_game_over()
+                # this_game.change_paused()
                 pass
 
             ene.restoreCooldown()
@@ -209,9 +225,7 @@ def player_pick_item(self, arbiter, space):
             player.apply_stat(stat, mod)
 
             if player.able_to_level_up():
-                player.level_up()
-                this_game.change_paused()
-                this_game.current_state.change_to_level_up()
+                prepare_level_up()
 
             it.destroy()
             return True
@@ -268,9 +282,93 @@ quit_button = button.Button(WIDTH/2 - resume_img.get_width()/2, 550, quit_img, 1
 treasure_background_img = pygame.image.load("Assets/screens/treasure_background.png").convert_alpha()
 level_up_background_img = pygame.image.load("Assets/screens/level_up_background.png").convert_alpha()
 item_select_img = pygame.image.load("Assets/screens/item_select.png").convert_alpha()
+item_button_1 = button.Button(WIDTH / 2 - 240, 165, item_select_img, 1)
+item_button_2 = button.Button(WIDTH / 2 - 240, 330, item_select_img, 1)
 
 
 title_font = pygame.font.Font(None, 48)
+
+
+#Este arreglo debe estar cargado con todos los items y armas disponibles
+#Cuando se maxee algo, se quita de la lista
+#Cuando se llegue a 2 o 3 armas, todas las demás armas se borran de la lista
+
+
+#Este arreglo toma dos items random para desplegar en la pantalla de Level Up
+
+
+
+def prepare_level_up():
+    player.level_up()
+    this_game.change_paused()
+    this_game.current_state.change_to_level_up()
+
+    #TODO: Preparar los items que se dan en el level up
+    this_game.selected_item_display = []
+
+    for i in player.Weapons:
+        print(f"Arma: {i.name} Tier: {i.tier}")
+        if i.tier == i.max_tier:
+            print("Arma Maxeada")
+            if i in this_game.level_item_display:
+                this_game.level_item_display.remove(i)
+
+    for i in player.Equipment:
+        print(f"Equipamiento: {i.name} Tier: {i.tier}")
+        if i.tier == i.max_tier:
+            print("Equipamiento Maxeado")
+            if i in this_game.level_item_display:
+                this_game.level_item_display.remove(i)
+
+    if len(player.Weapons) == player.MAX_CAPACITTY and not this_game.cleaned_weapons:
+        print("Se llenó armas")
+        this_game.clean_weapons()
+        temp = []
+        for i in range(0, len(this_game.level_item_display)):
+            if issubclass(type(this_game.level_item_display[i]), Weapon):
+                if this_game.level_item_display[i]  in player.Weapons:
+                    temp.append(this_game.level_item_display[i])
+            else:
+                temp.append(this_game.level_item_display[i])
+        this_game.level_item_display = temp
+
+    if len(player.Equipment) == player.MAX_CAPACITTY and not this_game.cleaned_equipment:
+        print("Se llenó el equipamiento")
+        this_game.clean_equipment()
+        temp = []
+        for i in range(0, len(this_game.level_item_display)):
+            if issubclass(type(this_game.level_item_display[i]), Equipment):
+                if this_game.level_item_display[i]  in player.Equipment:
+                    temp.append(this_game.level_item_display[i])
+            else:
+                temp.append(this_game.level_item_display[i])
+        this_game.level_item_display = temp
+
+    print("====================================")
+    print("ITEMS PARA DISPLAY")
+    for i in range(0, len(this_game.level_item_display)):
+        print(this_game.level_item_display[i].name)
+    print("====================================")
+
+
+    if len(this_game.level_item_display) == 0:
+        this_game.selected_item_display.append(GoldCoin((player.pos.x + 100, player.pos.y + 100), space, Enemy.COIN_IMAGE))
+        this_game.selected_item_display.append(FloorChicken((player.pos.x + 100, player.pos.y + 100), space, Enemy.CHICKEN_IMAGE))
+        print("====================================")
+        print("Items")
+        for i in range(0, len(this_game.selected_item_display)):
+            print(this_game.selected_item_display[i])
+        print(f"Cantidad: {len(this_game.selected_item_display)}")
+        print("====================================")
+    
+    elif len(this_game.level_item_display) == 1:
+        this_game.selected_item_display.append(this_game.level_item_display[0])
+    else:
+        temp_poll = this_game.level_item_display.copy()
+        for i in range(0, 2):
+            this_game.selected_item_display.append(random.choice(temp_poll))
+            temp_poll.remove(this_game.selected_item_display[i])
+        
 
 def draw_play_screen():
     pass
@@ -282,6 +380,14 @@ def draw_pause_screen():
     screen.blit(surface, (0,0))
     pause_text = title_font.render(f'GAME PAUSED', True, (255, 255, 255))
     screen.blit(pause_text, (WIDTH / 2 - 100, 100))
+    pause_text = title_font.render(f'Max HP: {player.max_hp}', True, (255, 255, 255))
+    screen.blit(pause_text, (WIDTH / 2 - 100, 200))
+    pause_text = title_font.render(f'Armor: {player.armor}', True, (255, 255, 255))
+    screen.blit(pause_text, (WIDTH / 2 - 100, 250))
+    pause_text = title_font.render(f'Attack: {player.attack}', True, (255, 255, 255))
+    screen.blit(pause_text, (WIDTH / 2 - 100, 300))
+    pause_text = title_font.render(f'Move Speed: {player.move_speed}', True, (255, 255, 255))
+    screen.blit(pause_text, (WIDTH / 2 - 100, 350))
     
 
 
@@ -308,14 +414,27 @@ def draw_level_up_screen():
     
     screen.blit(surface, (0,0))
     screen.blit(level_up_background_img, (WIDTH/2 - 300,20))
-    i = 0
-    for i in range(2):
-        screen.blit(item_select_img, (WIDTH / 2 - 240, 165 * (i+1)))
 
-    #Este botón se va a quitar cuando ya este lista la selección de items
-    if resume_button.draw(screen):
-        this_game.current_state.change_to_play()
-        this_game.change_paused()
+    if len(this_game.selected_item_display) > 0:
+        if item_button_1.draw(screen):
+            player.add_item(this_game.selected_item_display[0])
+            this_game.current_state.change_to_play()
+            this_game.change_paused()
+        item_text_1 = title_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
+        screen.blit(this_game.selected_item_display[0].image, (WIDTH / 2 - 160, 235))
+        screen.blit(item_text_1, (WIDTH / 2, 245))
+
+
+    if len(this_game.selected_item_display) > 1:
+        if item_button_2.draw(screen):
+            player.add_item(this_game.selected_item_display[1])
+            this_game.current_state.change_to_play()
+            this_game.change_paused()
+        item_text_2 = title_font.render(f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
+        screen.blit(this_game.selected_item_display[1].image, (WIDTH / 2 - 160, 400))
+        screen.blit(item_text_2, (WIDTH / 2, 410))
+
+
 
 def draw_game_over_screen():
     pygame.draw.rect(surface, (255, 0, 0, 150), [0,0, WIDTH, HEIGHT])
@@ -355,10 +474,12 @@ while True:
             if event.key == pygame.K_SPACE:
                 if this_game.paused and this_game.current_state.name == "Pause":
                     this_game.current_state.change_to_play()
+                    this_game.change_paused()
                     
                 elif not this_game.paused and this_game.current_state.name == "Play":
                     this_game.current_state.change_to_pause()
-                this_game.change_paused()
+                    this_game.change_paused()
+                
 
 
     # screen.blit(background, (0, 0))
