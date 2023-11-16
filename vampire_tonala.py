@@ -170,6 +170,7 @@ def timer(segundos):
                 if(ene.attackCooldown == 0):
                     enemyCooldown.remove(ene)
 
+        
         player.using_weapon()
 
         time.sleep(0.1)

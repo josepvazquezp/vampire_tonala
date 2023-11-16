@@ -28,8 +28,8 @@ class Projectile(pygame.sprite.Sprite, ABC):
 
         #Todo esto se puede ajustar
         self.body = pymunk.Body(1, 100)
-        self.body.position = self.x, self.y
-        self.shape = pymunk.Circle(self.body, 10) #El segundo valor es el radio del cuerpo
+        self.body.position =  self.x, self.y
+        self.shape = pymunk.Circle(self.body, 15) #El segundo valor es el radio del cuerpo
         self.shape.collision_type = 3
         self.space = space
         space.add(self.body, self.shape)
@@ -64,13 +64,14 @@ class KnifeProjectile(Projectile):
             if(angle == 270 or angle == 90):
                 image = pygame.transform.flip(image, False, True)
 
-        super().__init__(x, y, angle, 10, 10, space, image)
+        super().__init__(x, y, angle, 10, 6.5, space, image)
 
     def projectile_movement(self):
         self.x += self.x_vel
         self.y += self.y_vel
         self.rect.x = (self.x)
         self.rect.y = (self.y)
+
         self.body.position = self.x, self.y
         if pygame.time.get_ticks() - self.spawn_time > self.projectile_lifetime:
             self.destroy_projectile()
@@ -102,19 +103,7 @@ class FireWandProjectile(Projectile):
     IMAGE = pygame.image.load('Assets/Projectiles/fire_wand_projectile.png')
 
     def __init__(self, x:float, y:float, angle:int, space, player) -> None:
-        angle = 0
-
-        if(len(Enemy.ENEMIES) > 0):
-            enemy_vector = pygame.math.Vector2(Enemy.ENEMIES[0].get_enemy_hitbox_rect().center)
-            player_vector = pygame.math.Vector2(player.center)
-
-            mul = (enemy_vector.y - player_vector.y)
-            div = (enemy_vector.x - player_vector.x)
-            
-            if(div != 0):
-                angle = math.degrees(math.atan(mul / div))
-
-        super().__init__(x, y, angle, 10, 10, space, FireWandProjectile.IMAGE)
+        super().__init__(x, y, angle, 7.5, 20, space, FireWandProjectile.IMAGE)
         
 
     def projectile_movement(self):
@@ -122,7 +111,8 @@ class FireWandProjectile(Projectile):
         self.y += self.y_vel
         self.rect.x = (self.x)
         self.rect.y = (self.y)
-        self.body.position = self.x, self.y
-        
+        self.body.position = self.x + 20, self.y + 10
+        if pygame.time.get_ticks() - self.spawn_time > self.projectile_lifetime:
+            self.destroy_projectile()
 
 projectile_group = pygame.sprite.Group()

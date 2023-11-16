@@ -40,8 +40,8 @@ class Player(pygame.sprite.Sprite):
         self.space = space
         space.add(self.body, self.shape)
 
-        # Player.Weapons.append(Knife())
-        # Player.Weapons.append(MagicWand())
+        Player.Weapons.append(Knife())
+        Player.Weapons.append(MagicWand())
         Player.Weapons.append(FireWand())
 
     def take_damage(self, damage: int):

@@ -1,6 +1,8 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+import math
 import pygame
+from enemy import Enemy
 
 from projectile import FireWandProjectile, KnifeProjectile, MagicWandProjectile, Projectile
 
@@ -34,7 +36,7 @@ class MagicWand(Weapon):
     IMAGE = pygame.image.load('Assets/Weapons/Sprite-Magic_Wand.png')
 
     def __init__(self) -> None:
-        super().__init__(5, 10, MagicWand.IMAGE, "magic_wand")
+        super().__init__(5, 12, MagicWand.IMAGE, "magic_wand")
     
     def create_projectile(self, x:float, y:float, direction:int, space, player) -> Projectile:
         return MagicWandProjectile(x, y, direction, space)
@@ -43,7 +45,19 @@ class FireWand(Weapon):
     IMAGE = pygame.image.load('Assets/Weapons/Sprite-Fire_Wand.png')
 
     def __init__(self) -> None:
-        super().__init__(5, 20, FireWand.IMAGE, "fire_wand")
+        super().__init__(5, 30, FireWand.IMAGE, "fire_wand")
     
     def create_projectile(self, x:float, y:float, direction:int, space, player) -> Projectile:
-        return FireWandProjectile(x, y, direction, space, player)
+        angle = 0
+
+        if(len(Enemy.ENEMIES) > 0):
+            enemy_vector = pygame.math.Vector2(Enemy.ENEMIES[0].get_enemy_hitbox_rect().center)
+            player_vector = pygame.math.Vector2(player.center)
+
+            mul = (enemy_vector.y - player_vector.y)
+            div = (enemy_vector.x - player_vector.x)
+            
+            if(div != 0):
+                angle = math.degrees(math.atan(mul / div))
+                
+        return [FireWandProjectile(x, y, angle - 20, space, player), FireWandProjectile(x, y, angle, space, player), FireWandProjectile(x, y, angle + 20, space, player)]
