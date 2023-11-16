@@ -102,25 +102,27 @@ class FireWandProjectile(Projectile):
     IMAGE = pygame.image.load('Assets/Projectiles/fire_wand_projectile.png')
 
     def __init__(self, x:float, y:float, angle:int, space, player) -> None:
+        angle = 0
+
+        if(len(Enemy.ENEMIES) > 0):
+            enemy_vector = pygame.math.Vector2(Enemy.ENEMIES[0].get_enemy_hitbox_rect().center)
+            player_vector = pygame.math.Vector2(player.center)
+
+            mul = (enemy_vector.y - player_vector.y)
+            div = (enemy_vector.x - player_vector.x)
+            
+            if(div != 0):
+                angle = math.degrees(math.atan(mul / div))
+
         super().__init__(x, y, angle, 10, 10, space, FireWandProjectile.IMAGE)
-        self.player = player
         
 
     def projectile_movement(self):
-        enemy_vector = pygame.math.Vector2(Enemy.ENEMIES[0].get_enemy_hitbox_rect().center)
-        player_vector = pygame.math.Vector2(self.player.center)
+        self.x += self.x_vel
+        self.y += self.y_vel
+        self.rect.x = (self.x)
+        self.rect.y = (self.y)
+        self.body.position = self.x, self.y
         
-        if(enemy_vector - player_vector != 0):
-            self.angle = (enemy_vector - player_vector).normalize()
-        else:
-            self.angle = pygame.math.Vector2(0, 0)
-
-        projectile_vector = pygame.math.Vector2(self.rect.center)
-        
-        projectile_vector += self.angle * self.speed
-
-        self.rect.centerx = projectile_vector.x
-        self.rect.centery = projectile_vector.y
-        self.body.position = projectile_vector.x, projectile_vector.y
 
 projectile_group = pygame.sprite.Group()
