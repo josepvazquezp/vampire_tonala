@@ -40,9 +40,9 @@ class Player(pygame.sprite.Sprite):
         self.space = space
         space.add(self.body, self.shape)
 
-        Player.Weapons.append(Knife())
-        Player.Weapons.append(MagicWand())
-        Player.Weapons.append(FireWand())
+        # Player.Weapons.append(Knife())
+        # Player.Weapons.append(MagicWand())
+        # Player.Weapons.append(FireWand())
 
     def take_damage(self, damage: int):
         ''' '''
@@ -100,7 +100,8 @@ class Player(pygame.sprite.Sprite):
                 all_sprites.add(projectile)
 
     def equip_weapon(self, weapon):
-        Player.Weapons.append(weapon)
+        if(weapon != None):
+            Player.Weapons.append(weapon)
     
     def move(self):
         self.pos += pygame.math.Vector2(self.velocity_x,self.velocity_y)
