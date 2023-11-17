@@ -1,4 +1,5 @@
 from __future__ import annotations
+import random
 import pygame
 import math
 import pymunk
@@ -32,12 +33,19 @@ class Chest(pygame.sprite.Sprite):
         Chest.CHESTS.append(self)
 
 
-    def open_chest(self):
+    def open_chest(self, items):
         ''' Esta madre deberia de soltar del loot '''
+        selected_item = random.choice(items)
+        print(selected_item)
+        return selected_item
+
+
+        
+
+    def destroy(self):
         Chest.CHESTS.remove(self)
         self.space.remove(self.body, self.shape)
         self.kill()
-
 
     def update(self):
         self.body.position = self.position.x, self.position.y

@@ -37,40 +37,43 @@ class SpecificWeapon(ABC):
 
 class Knife(SpecificWeapon):
     IMAGE = pygame.image.load('Assets/Projectiles/Icon-Knife.jpg')
+    name = "knife"
     damage = 6.5
     speed = 10
 
     def create(self) -> Weapon:
-        return Weapon(5, 10, Knife.IMAGE, "knife", FactoryWeapon.WeaponCatalog.KNIFE)
+        return Weapon(8, 10, Knife.IMAGE, "knife", FactoryWeapon.WeaponCatalog.KNIFE)
     
     def create_projectile(self, x:float, y:float, direction:int, space, player, damage, speed) -> Projectile:
-        return KnifeProjectile(x, y, direction, space, damage, speed)
+        return KnifeProjectile(x, y, direction, space, damage * player.attack, speed)
 
 class MagicWand(SpecificWeapon):
     IMAGE = pygame.image.load('Assets/Weapons/Sprite-Magic_Wand.png')
+    name = "magicwand"
     damage = 10
     speed = 10
 
     def create(self) -> Weapon:
-        return Weapon(5, 20, MagicWand.IMAGE, "magic_wand", FactoryWeapon.WeaponCatalog.MAGIC_WAND)
+        return Weapon(8, 20, MagicWand.IMAGE, "magic_wand", FactoryWeapon.WeaponCatalog.MAGIC_WAND)
     
     def create_projectile(self, x:float, y:float, direction:int, space, player, damage, speed) -> Projectile:
-        return MagicWandProjectile(x, y, direction, space, damage, speed)
+        return MagicWandProjectile(x, y, direction, space, damage * player.attack, speed)
     
 class FireWand(SpecificWeapon):
     IMAGE = pygame.image.load('Assets/Weapons/Sprite-Fire_Wand.png')
+    name = "firewand"
     damage = 20
     speed = 7.5
 
     def create(self) -> Weapon:
-        return Weapon(5, 30, FireWand.IMAGE, "fire_wand", FactoryWeapon.WeaponCatalog.FIRE_WAND)
+        return Weapon(8, 30, FireWand.IMAGE, "fire_wand", FactoryWeapon.WeaponCatalog.FIRE_WAND)
     
     def create_projectile(self, x:float, y:float, direction:int, space, player, damage, speed) -> Projectile:
         angle = 0
 
         if(len(Enemy.ENEMIES) > 0):
             enemy_vector = pygame.math.Vector2(Enemy.ENEMIES[0].get_enemy_hitbox_rect().center)
-            player_vector = pygame.math.Vector2(player.center)
+            player_vector = pygame.math.Vector2(player.get_player_hitbox_rect().center)
 
             mul = (enemy_vector.y - player_vector.y)
             div = (enemy_vector.x - player_vector.x)
@@ -78,7 +81,7 @@ class FireWand(SpecificWeapon):
             if(div != 0):
                 angle = math.degrees(math.atan(mul / div))
                 
-        return [FireWandProjectile(x, y, angle - 20, space, damage, speed), FireWandProjectile(x, y, angle, space, damage, speed), FireWandProjectile(x, y, angle + 20, space, damage, speed)]
+        return [FireWandProjectile(x, y, angle - 20, space, damage * player.attack, speed), FireWandProjectile(x, y, angle, space, damage * player.attack, speed), FireWandProjectile(x, y, angle + 20, space, damage * player.attack, speed)]
     
 class FactoryWeapon():
     class WeaponCatalog(Enum):
