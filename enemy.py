@@ -149,7 +149,7 @@ class Reaper(SpecificEnemy):
     IMAGE = pygame.image.load('Assets/Enemies/Sprite-BOSS_XLDEATH.jpg')
 
     def create(self, position, player, space) -> Enemy:
-        return Enemy(position, 600, 5, 60, Reaper.IMAGE, player, space, 40)
+        return Enemy(position, 600, 10, 9999, Reaper.IMAGE, player, space, 40)
 
 class Skullone(SpecificEnemy):
     IMAGE = pygame.image.load('Assets/Enemies/Sprite-SKULLNOAURA.jpg')

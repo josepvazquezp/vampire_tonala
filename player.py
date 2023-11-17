@@ -13,6 +13,24 @@ def convert_coordinates(point):
         return int(point[0]), (int(point[1]))
 
 class Player(pygame.sprite.Sprite):
+    """
+    Clase que representa al jugador en el juego.
+
+    Atributos:
+        Weapons (list): Lista de armas que el jugador puede usar.
+        FACT_WEAPON (FactoryWeapon): Fábrica para crear instancias de armas.
+        pos (Vector2): Posición del jugador en el juego.
+        image (Surface): Imagen que representa al jugador.
+        speed (int): Velocidad de movimiento del jugador.
+        hp (int): Puntos de salud actuales del jugador.
+        max_hp (int): Máximo de puntos de salud del jugador.
+        level (int): Nivel actual del jugador.
+        curren_xp (int): Experiencia actual del jugador.
+        next_level_xp (int): Experiencia necesaria para el siguiente nivel.
+        gold (int): Cantidad de oro que posee el jugador.
+        body (pymunk.Body): Cuerpo físico del jugador en el motor de física.
+        shape (pymunk.Circle): Forma física asociada al cuerpo del jugador.
+    """
     Weapons = []
     Equipment = []
     MAX_CAPACITTY = 5
@@ -57,12 +75,22 @@ class Player(pygame.sprite.Sprite):
         self.hp -= int(true_damage)
 
     def is_dead(self):
+        """
+        Verifica si el jugador ha muerto.
+
+        Returns:
+            bool: True si los puntos de salud del jugador son 0 o menos, False en caso contrario.
+        """
         if self.hp > 0:
             return False
         return True
 
 
     def player_rotate(self):
+        """
+        Rota la imagen del jugador basado en la entrada del usuario.
+        Cambia la orientación del jugador a izquierda o derecha.
+        """
         keys = pygame.key.get_pressed()
         if(keys[pygame.K_a]):
             self.image = pygame.transform.flip(self.base_player_image,True,False)
@@ -72,9 +100,19 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=self.hitbox_rect.center)
     
     def get_player_hitbox_rect(self):
+        """
+        Retorna el rectángulo de colisión del jugador.
+
+        Returns:
+            Rect: Rectángulo de colisión de pygame del jugador.
+        """
         return self.hitbox_rect
     
     def user_input(self):
+        """
+        Maneja la entrada del usuario para mover al jugador.
+        Actualiza las velocidades x e y del jugador en función de las teclas presionadas.
+        """
 
         self.velocity_x = 0
         self.velocity_y = 0
@@ -98,6 +136,10 @@ class Player(pygame.sprite.Sprite):
             self.velocity_y /= math.sqrt(2)
 
     def using_weapon(self):
+        """
+        Utiliza las armas equipadas por el jugador.
+        Crea y añade proyectiles al grupo de sprites en función del arma utilizada.
+        """
         for weapon in Player.Weapons:
             if weapon.actual_cooldown == 0:
                 weapon.actual_cooldown = weapon.cooldown
@@ -132,7 +174,12 @@ class Player(pygame.sprite.Sprite):
         
 
     def equip_weapon(self, weapon):
-        print(weapon)
+        """
+        Equipa una nueva arma o mejora una existente.
+
+        Args:
+            weapon (Weapon): Arma a equipar o mejorar.
+        """
         flag = False
 
         for w in Player.Weapons:
@@ -151,7 +198,13 @@ class Player(pygame.sprite.Sprite):
         self.body.position = convert_coordinates(self.pos)
 
     def apply_stat(self, stat: int, modif: float):
-        ''' Recibe un stat a modificar y la cantidad que se le va a aplicar '''
+        """
+        Aplica un modificador a una estadística específica del jugador.
+
+        Args:
+            stat (int): El identificador de la estadística a modificar.
+            modif (float): La cantidad a aplicar a la estadística.
+        """
         if(stat == 1):
             self.gain_xp(modif)
         elif(stat == 2):
@@ -178,7 +231,12 @@ class Player(pygame.sprite.Sprite):
 
 
     def able_to_level_up(self):
-        '''  '''
+        """
+        Verifica si el jugador puede subir de nivel.
+
+        Returns:
+            bool: True si el jugador tiene suficiente experiencia para subir de nivel, False en caso contrario.
+        """
         if(self.curren_xp >= self.next_level_xp):
             return True
         return False
@@ -192,19 +250,33 @@ class Player(pygame.sprite.Sprite):
 
 
     def heal(self, heal: int):
-        '''  '''
+        """
+        Aumenta los puntos de salud del jugador.
+
+        Args:
+            heal (int): Cantidad de puntos de salud a añadir.
+        """
         if self.hp + heal > self.max_hp:
             self.hp = self.max_hp
         else:
             self.hp += heal
 
     def earn_gold(self, gold: int):
-        ''''''
+        """
+        Aumenta la cantidad de oro del jugador.
+
+        Args:
+            gold (int): Cantidad de oro a añadir.
+        """
         self.gold += gold
 
 
 
     def update(self):
+        """
+        Actualiza el estado y la posición del jugador.
+        Gestiona la entrada del usuario, movimiento, rotación y el uso de armas.
+        """
         self.user_input()
         self.move()
         self.player_rotate()

@@ -8,6 +8,21 @@ from enemy import Enemy
 from projectile import FireWandProjectile, KnifeProjectile, MagicWandProjectile, Projectile
 
 class Weapon(ABC):
+    """
+    Representa una arma abstracta en el juego con propiedades básicas.
+
+    Atributos:
+        tier (int): Nivel actual del arma.
+        max_tier (int): Nivel máximo al que puede ascender el arma.
+        cooldown (float): Tiempo de enfriamiento entre usos del arma.
+        actual_cooldown (float): Tiempo actual de enfriamiento.
+        image (str): Ruta de la imagen del arma.
+        name (str): Nombre del arma.
+        type: Tipo de arma, definido por una enumeración o similar.
+
+    Métodos:
+        upgrade_weapon: Aumenta el nivel del arma si no ha alcanzado su máximo.
+    """
     def __init__(self, max_tier:int, cooldown:float, image:str, name:str, type) -> None:
         self.tier:int = 1
         self.max_tier:int = max_tier
@@ -28,6 +43,13 @@ class Weapon(ABC):
 
 # 1.- Interface para weapons
 class SpecificWeapon(ABC):
+    """
+    Interfaz para la creación de armas específicas y sus proyectiles asociados.
+
+    Métodos abstractos:
+        create: Crea y retorna un objeto de tipo Weapon.
+        create_projectile: Crea y retorna un objeto de tipo Projectile.
+    """
     def create(self) -> Weapon:
         ''' Crea una weapon en especifico y retorna ese objeto'''
         pass
@@ -36,6 +58,16 @@ class SpecificWeapon(ABC):
         pass
 
 class Knife(SpecificWeapon):
+    """
+    Implementa la interfaz SpecificWeapon para crear un arma tipo 'Knife' y sus proyectiles.
+
+    Atributos estáticos:
+        IMAGE: Imagen asociada al arma 'Knife'.
+
+    Métodos:
+        create: Crea y retorna una instancia de Weapon configurada como un 'Knife'.
+        create_projectile: Crea y retorna una instancia de KnifeProjectile.
+    """
     IMAGE = pygame.image.load('Assets/Projectiles/Icon-Knife.jpg')
     name = "knife"
     damage = 6.5
@@ -48,6 +80,16 @@ class Knife(SpecificWeapon):
         return KnifeProjectile(x, y, direction, space, damage * player.attack, speed)
 
 class MagicWand(SpecificWeapon):
+    """
+    Implementa la interfaz SpecificWeapon para crear un arma tipo 'Magic Wand' y sus proyectiles.
+
+    Atributos estáticos:
+        IMAGE: Imagen asociada al arma 'Magic Wand'.
+
+    Métodos:
+        create: Crea y retorna una instancia de Weapon configurada como un 'Magic Wand'.
+        create_projectile: Crea y retorna una instancia de MagicWandProjectile.
+    """
     IMAGE = pygame.image.load('Assets/Weapons/Sprite-Magic_Wand.png')
     name = "magicwand"
     damage = 10
@@ -60,6 +102,17 @@ class MagicWand(SpecificWeapon):
         return MagicWandProjectile(x, y, direction, space, damage * player.attack, speed)
     
 class FireWand(SpecificWeapon):
+    """
+    Implementa la interfaz SpecificWeapon para crear un arma tipo 'Fire Wand' y sus proyectiles.
+
+    Atributos estáticos:
+        IMAGE: Imagen asociada al arma 'Fire Wand'.
+
+    Métodos:
+        create: Crea y retorna una instancia de Weapon configurada como un 'Fire Wand'.
+        create_projectile: Crea y retorna instancias de FireWandProjectile.
+            Calcula el ángulo de disparo basándose en la posición del jugador y el enemigo más cercano.
+    """
     IMAGE = pygame.image.load('Assets/Weapons/Sprite-Fire_Wand.png')
     name = "firewand"
     damage = 20
@@ -84,6 +137,15 @@ class FireWand(SpecificWeapon):
         return [FireWandProjectile(x, y, angle - 20, space, damage * player.attack, speed), FireWandProjectile(x, y, angle, space, damage * player.attack, speed), FireWandProjectile(x, y, angle + 20, space, damage * player.attack, speed)]
     
 class FactoryWeapon():
+    """
+    Fábrica para la creación de armas basada en un catálogo de armas definido.
+
+    Atributos estáticos:
+        WeaponCatalog (Enum): Enumeración que define los tipos de armas disponibles.
+
+    Métodos:
+        create_weapon: Crea y retorna una instancia de Weapon basada en el tipo especificado.
+    """
     class WeaponCatalog(Enum):
              KNIFE = Knife()
              MAGIC_WAND = MagicWand()
