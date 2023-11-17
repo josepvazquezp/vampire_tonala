@@ -68,7 +68,7 @@ class Knife(SpecificWeapon):
         create: Crea y retorna una instancia de Weapon configurada como un 'Knife'.
         create_projectile: Crea y retorna una instancia de KnifeProjectile.
     """
-    IMAGE = pygame.image.load('Assets/Projectiles/Icon-Knife.jpg')
+    IMAGE = pygame.transform.rotozoom(pygame.image.load('Assets/Projectiles/Icon-Knife.jpg'), 0, .5)
     name = "knife"
     damage = 6.5
     speed = 10
@@ -90,7 +90,8 @@ class MagicWand(SpecificWeapon):
         create: Crea y retorna una instancia de Weapon configurada como un 'Magic Wand'.
         create_projectile: Crea y retorna una instancia de MagicWandProjectile.
     """
-    IMAGE = pygame.image.load('Assets/Weapons/Sprite-Magic_Wand.png')
+    IMAGE = pygame.transform.rotozoom(pygame.image.load('Assets/Weapons/Sprite-Magic_Wand.png'), 0, .5)
+    
     name = "magicwand"
     damage = 10
     speed = 10
@@ -113,7 +114,7 @@ class FireWand(SpecificWeapon):
         create_projectile: Crea y retorna instancias de FireWandProjectile.
             Calcula el ángulo de disparo basándose en la posición del jugador y el enemigo más cercano.
     """
-    IMAGE = pygame.image.load('Assets/Weapons/Sprite-Fire_Wand.png')
+    IMAGE = pygame.transform.rotozoom(pygame.image.load('Assets/Weapons/Sprite-Fire_Wand.png'), 0, .5)
     name = "firewand"
     damage = 20
     speed = 7.5
