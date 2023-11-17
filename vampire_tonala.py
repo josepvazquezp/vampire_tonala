@@ -354,11 +354,12 @@ quit_button = button.Button(WIDTH/2 - resume_img.get_width()/2, 550, quit_img, 1
 treasure_background_img = pygame.image.load("Assets/screens/treasure_background.png").convert_alpha()
 level_up_background_img = pygame.image.load("Assets/screens/level_up_background.png").convert_alpha()
 item_select_img = pygame.image.load("Assets/screens/item_select.png").convert_alpha()
-item_button_1 = button.Button(WIDTH / 2 - 240, 165, item_select_img, 1)
-item_button_2 = button.Button(WIDTH / 2 - 240, 330, item_select_img, 1)
+item_button_1 = button.Button(WIDTH / 2 - 240, 170, item_select_img, 1)
+item_button_2 = button.Button(WIDTH / 2 - 240, 350, item_select_img, 1)
 
 
 title_font = pygame.font.Font(None, 48)
+items_font = pygame.font.Font(None, 40)
 
 
 #Este arreglo debe estar cargado con todos los items y armas disponibles
@@ -546,13 +547,13 @@ def draw_level_up_screen():
             this_game.current_state.change_to_play()
             this_game.change_paused()
         if len(this_game.level_item_display) == 0:
-            item_text_1 = title_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
+            item_text_1 = items_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
             screen.blit(this_game.selected_item_display[0].image, (WIDTH / 2 - 160, 200))
-            screen.blit(item_text_1, (WIDTH / 2, 245))
+            screen.blit(item_text_1, (WIDTH / 2 - 20, 245))
         else:
-            item_text_1 = title_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
+            item_text_1 = items_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
             screen.blit(this_game.selected_item_display[0].value.IMAGE, (WIDTH / 2 - 160, 200))
-            screen.blit(item_text_1, (WIDTH / 2, 245))
+            screen.blit(item_text_1, (WIDTH / 2 - 20, 245))
 
 
     if len(this_game.selected_item_display) > 1:
@@ -561,13 +562,13 @@ def draw_level_up_screen():
             this_game.current_state.change_to_play()
             this_game.change_paused()
         if len(this_game.level_item_display) == 0:
-            item_text_2 = title_font.render(f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
+            item_text_2 = items_font.render(f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
             screen.blit(this_game.selected_item_display[1].image, (WIDTH / 2 - 160, 400))
-            screen.blit(item_text_2, (WIDTH / 2, 400))
+            screen.blit(item_text_2, (WIDTH / 2 - 20, 400))
         else:
-            item_text_2 = title_font.render(f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
+            item_text_2 = items_font.render(f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
             screen.blit(this_game.selected_item_display[1].value.IMAGE, (WIDTH / 2 - 160, 400))
-            screen.blit(item_text_2, (WIDTH / 2, 410))
+            screen.blit(item_text_2, (WIDTH / 2 - 20, 410))
 
 
 
