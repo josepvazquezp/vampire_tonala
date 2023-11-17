@@ -92,7 +92,7 @@ class Player(pygame.sprite.Sprite):
                 weapon.actual_cooldown = weapon.cooldown
                 spawn_projectile = self.pos
                 
-                projectile = weapon.type.value.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space, self.get_player_hitbox_rect(), weapon.tier)
+                projectile = weapon.type.value.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space, self.get_player_hitbox_rect(), weapon.type.value.damage, weapon.type.value.speed)
                 projectile_group.add(projectile)
                 all_sprites.add(projectile)
 

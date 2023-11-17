@@ -21,40 +21,51 @@ class Weapon(ABC):
         if(self.tier != self.max_tier):
             self.tier += 1
 
+            if(self.tier % 2 == 0):
+                self.type.value.damage += 0.1
+            else:
+                self.type.value.speed += 0.1
+
 # 1.- Interface para weapons
 class SpecificWeapon(ABC):
     def create(self) -> Weapon:
         ''' Crea una weapon en especifico y retorna ese objeto'''
         pass
     
-    def create_projectile(self, x:float, y:float, direction:int, space, player, tier:int) -> Projectile:
+    def create_projectile(self, x:float, y:float, direction:int, space, player, damage, speed) -> Projectile:
         pass
 
 class Knife(SpecificWeapon):
     IMAGE = pygame.image.load('Assets/Projectiles/Icon-Knife.jpg')
+    damage = 6.5
+    speed = 10
 
     def create(self) -> Weapon:
         return Weapon(5, 10, Knife.IMAGE, "knife", FactoryWeapon.WeaponCatalog.KNIFE)
     
-    def create_projectile(self, x:float, y:float, direction:int, space, player, tier:int) -> Projectile:
-        return KnifeProjectile(x, y, direction, space, tier)
+    def create_projectile(self, x:float, y:float, direction:int, space, player, damage, speed) -> Projectile:
+        return KnifeProjectile(x, y, direction, space, damage, speed)
 
 class MagicWand(SpecificWeapon):
     IMAGE = pygame.image.load('Assets/Weapons/Sprite-Magic_Wand.png')
+    damage = 10
+    speed = 10
 
     def create(self) -> Weapon:
         return Weapon(5, 20, MagicWand.IMAGE, "magic_wand", FactoryWeapon.WeaponCatalog.MAGIC_WAND)
     
-    def create_projectile(self, x:float, y:float, direction:int, space, player, tier:int) -> Projectile:
-        return MagicWandProjectile(x, y, direction, space, tier)
+    def create_projectile(self, x:float, y:float, direction:int, space, player, damage, speed) -> Projectile:
+        return MagicWandProjectile(x, y, direction, space, damage, speed)
     
 class FireWand(SpecificWeapon):
     IMAGE = pygame.image.load('Assets/Weapons/Sprite-Fire_Wand.png')
+    damage = 20
+    speed = 7.5
 
     def create(self) -> Weapon:
         return Weapon(5, 30, FireWand.IMAGE, "fire_wand", FactoryWeapon.WeaponCatalog.FIRE_WAND)
     
-    def create_projectile(self, x:float, y:float, direction:int, space, player, tier:int) -> Projectile:
+    def create_projectile(self, x:float, y:float, direction:int, space, player, damage, speed) -> Projectile:
         angle = 0
 
         if(len(Enemy.ENEMIES) > 0):
@@ -67,7 +78,7 @@ class FireWand(SpecificWeapon):
             if(div != 0):
                 angle = math.degrees(math.atan(mul / div))
                 
-        return [FireWandProjectile(x, y, angle - 20, space, player, tier), FireWandProjectile(x, y, angle, space, player, tier), FireWandProjectile(x, y, angle + 20, space, player, tier)]
+        return [FireWandProjectile(x, y, angle - 20, space, damage, speed), FireWandProjectile(x, y, angle, space, damage, speed), FireWandProjectile(x, y, angle + 20, space, damage, speed)]
     
 class FactoryWeapon():
     class WeaponCatalog(Enum):

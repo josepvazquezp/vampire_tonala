@@ -54,8 +54,6 @@ player = Player(100, 5, space)
 #Spawn variables
 
 player.equip_weapon(FactoryWeapon.WeaponCatalog.KNIFE)
-player.equip_weapon(FactoryWeapon.WeaponCatalog.MAGIC_WAND)
-player.equip_weapon(FactoryWeapon.WeaponCatalog.FIRE_WAND)
 
 SPAWN_RADIUS = 600  # radius around the player within which enemies will spawn
 spawned_enemies = []  # List to keep track of spawned enemies

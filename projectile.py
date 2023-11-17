@@ -55,8 +55,10 @@ class Projectile(pygame.sprite.Sprite, ABC):
 
 class KnifeProjectile(Projectile):
     IMAGE = pygame.transform.rotozoom(pygame.image.load('Assets/Projectiles/navaja.png'), 0, .25)
+    damage = 6.5
+    speed = 10
 
-    def __init__(self, x:float, y:float, angle:int, space, tier:int) -> None:
+    def __init__(self, x:float, y:float, angle:int, space, damage, speed) -> None:
         image = KnifeProjectile.IMAGE
 
         if(angle != 0):
@@ -64,7 +66,7 @@ class KnifeProjectile(Projectile):
             if(angle == 270 or angle == 90):
                 image = pygame.transform.flip(image, False, True)
 
-        super().__init__(x, y, angle, 10, 6.5, space, image)
+        super().__init__(x, y, angle, speed, damage, space, image)
 
     def projectile_movement(self):
         self.x += self.x_vel
@@ -79,8 +81,8 @@ class KnifeProjectile(Projectile):
 class MagicWandProjectile(Projectile):
     IMAGE = pygame.image.load('Assets/Projectiles/magic_wand_projectile.png')
 
-    def __init__(self, x:float, y:float, angle:int, space, tier:int) -> None:
-        super().__init__(x, y, angle, 10, 10, space, MagicWandProjectile.IMAGE)
+    def __init__(self, x:float, y:float, angle:int, space, damage, speed) -> None:
+        super().__init__(x, y, angle, speed, damage, space, MagicWandProjectile.IMAGE)
     
     def projectile_movement(self):
         enemy_vector = pygame.math.Vector2(Enemy.ENEMIES[0].get_enemy_hitbox_rect().center)
@@ -102,10 +104,9 @@ class MagicWandProjectile(Projectile):
 class FireWandProjectile(Projectile):
     IMAGE = pygame.image.load('Assets/Projectiles/fire_wand_projectile.png')
 
-    def __init__(self, x:float, y:float, angle:int, space, player, tier:int) -> None:
-        super().__init__(x, y, angle, 7.5, 20, space, FireWandProjectile.IMAGE)
+    def __init__(self, x:float, y:float, angle:int, space, damage, speed) -> None:
+        super().__init__(x, y, angle, speed, damage, space, FireWandProjectile.IMAGE)
         
-
     def projectile_movement(self):
         self.x += self.x_vel
         self.y += self.y_vel
