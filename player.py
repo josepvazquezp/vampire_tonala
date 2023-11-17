@@ -2,11 +2,12 @@ from __future__ import annotations
 import pygame
 import math
 from Camera import *
-from equipment import Equipment
+from equipment import Equipment, FactoryEquipment
 from settings import *
 from projectile import *
 import pymunk
 from weapon import * 
+from enemy import Enemy
 
 def convert_coordinates(point):
         return int(point[0]), (int(point[1]))
@@ -15,6 +16,7 @@ class Player(pygame.sprite.Sprite):
     Weapons = []
     Equipment = []
     MAX_CAPACITTY = 5
+    FACT_WEAPON = FactoryWeapon()
 
     def __init__(self, hp, speed, space):
         super().__init__()
@@ -47,11 +49,12 @@ class Player(pygame.sprite.Sprite):
         self.space = space
         space.add(self.body, self.shape)
 
-        Player.Weapons.append(Knife())
-
     def take_damage(self, damage: int):
         ''' '''
-        self.hp -= damage
+        true_damage = damage - self.armor
+        if(true_damage < 0):
+            true_damage = 1
+        self.hp -= int(true_damage)
 
     def is_dead(self):
         if self.hp > 0:
@@ -99,26 +102,28 @@ class Player(pygame.sprite.Sprite):
             if weapon.actual_cooldown == 0:
                 weapon.actual_cooldown = weapon.cooldown
                 spawn_projectile = self.pos
-
-                projectile = weapon.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space)
+                
+                projectile = weapon.type.value.create_projectile(spawn_projectile[0], spawn_projectile[1], self.current_direction, self.space, self, weapon.type.value.damage, weapon.type.value.speed)
                 projectile_group.add(projectile)
                 all_sprites.add(projectile)
 
     def add_item(self, item):
-        if issubclass(type(item), Equipment):
+        if isinstance(item, FactoryEquipment.EquipmentCatalog):
             print("Es equipamiento")
-            if item in Player.Equipment:
-                index = Player.Equipment.index(item)
+            if item.value in Player.Equipment:
+                index = Player.Equipment.index(item.value)
                 if Player.Equipment[index].upgrade_equipment():
-                    stat, modifier = item.get_effect()
+                    stat, modifier = item.value.get_effect()
                     self.apply_stat(stat, modifier)
             else:
-                Player.Equipment.append(item)
-                stat, modifier = item.get_effect()
+                Player.Equipment.append(item.value.create())
+                stat, modifier = (item.value.STAT, item.value.MOFIFIER)
                 self.apply_stat(stat, modifier)
 
-        elif issubclass(type(item), Weapon):
+        elif isinstance(item, FactoryWeapon.WeaponCatalog):
             print("Es arma")
+            print(item.name)
+            self.equip_weapon(item)
         else:
             stat, modifier = item.pick_up()
             item.destroy()
@@ -126,9 +131,21 @@ class Player(pygame.sprite.Sprite):
 
         
 
+    def equip_weapon(self, weapon):
+        print(weapon)
+        flag = False
+
+        for w in Player.Weapons:
+            if(weapon == w.type):
+                w.upgrade_weapon()
+                flag = True
+                break
+
+        if(weapon != None and not flag):
+            Player.Weapons.append(Player.FACT_WEAPON.create_weapon(weapon))
     
     def move(self):
-        self.pos += pygame.math.Vector2(self.velocity_x,self.velocity_y)
+        self.pos += pygame.math.Vector2(self.velocity_x * self.move_speed,self.velocity_y * self.move_speed)
 
         self.hitbox_rect.center = self.pos
         self.body.position = convert_coordinates(self.pos)

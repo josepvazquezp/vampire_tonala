@@ -18,7 +18,7 @@ from enemy import *
 import state
 import button
 import equipment
-import weapon
+
 
 import time
 import threading
@@ -57,6 +57,9 @@ player = Player(100, 5, space)
 #reaper = Reaper((800,620), reaperImage, player, space)
 #Spawn variables
 
+
+player.equip_weapon(FactoryWeapon.WeaponCatalog.KNIFE)
+
 SPAWN_RADIUS = 600  # radius around the player within which enemies will spawn
 spawned_enemies = []  # List to keep track of spawned enemies
 ENEMY_TYPES = [1,2,3]  # Add more enemy types as needed
@@ -81,11 +84,14 @@ class Game:
         self.current_state : state.State = state.PlayState(self)
         self.paused = False
         self.selected_item_display = []
-        self.level_item_display = [equipment.Armor(), equipment.HollowHeart(), equipment.Spinach(), equipment.Wings(), weapon.Knife()]
+        self.level_item_display = [ FactoryWeapon.WeaponCatalog.KNIFE, FactoryWeapon.WeaponCatalog.FIRE_WAND, 
+                                   FactoryWeapon.WeaponCatalog.MAGIC_WAND, equipment.FactoryEquipment.EquipmentCatalog.ARMOR,
+                                   equipment.FactoryEquipment.EquipmentCatalog.HOLLOWHEART, equipment.FactoryEquipment.EquipmentCatalog.SPINACH,
+                                   equipment.FactoryEquipment.EquipmentCatalog.WINGS]
         self.cleaned_weapons : bool = False
         self.cleaned_equipment : bool = False
 
-        self.equipment_available = [equipment.Armor(), equipment.HollowHeart(), equipment.Spinach(), equipment.Wings()]
+        #self.equipment_available = [equipment.Armor(), equipment.HollowHeart(), equipment.Spinach(), equipment.Wings()]
 
         self.chest = None
         self.chest_open = False
@@ -189,6 +195,7 @@ def timer(segundos):
                 if(ene.attackCooldown == 0):
                     enemyCooldown.remove(ene)
 
+        
         player.using_weapon()
 
         time.sleep(0.1)
@@ -212,8 +219,8 @@ def enemy_hit_player(self, arbiter, space):
             player.take_damage(ene.power)
 
             if player.is_dead():
-                # this_game.current_state.change_to_game_over()
-                # this_game.change_paused()
+                this_game.current_state.change_to_game_over()
+                this_game.change_paused()
                 pass
 
             ene.restoreCooldown()
@@ -312,39 +319,39 @@ def prepare_level_up():
         print(f"Arma: {i.name} Tier: {i.tier}")
         if i.tier == i.max_tier:
             print("Arma Maxeada")
-            if i in this_game.level_item_display:
-                this_game.level_item_display.remove(i)
+            if i.type in this_game.level_item_display:
+                this_game.level_item_display.remove(i.type)
 
     for i in player.Equipment:
         print(f"Equipamiento: {i.name} Tier: {i.tier}")
         if i.tier == i.max_tier:
             print("Equipamiento Maxeado")
-            if i in this_game.level_item_display:
-                this_game.level_item_display.remove(i)
+            if i.type in this_game.level_item_display:
+                this_game.level_item_display.remove(i.type)
 
-    if len(player.Weapons) == player.MAX_CAPACITTY and not this_game.cleaned_weapons:
-        print("Se llenó armas")
-        this_game.clean_weapons()
-        temp = []
-        for i in range(0, len(this_game.level_item_display)):
-            if issubclass(type(this_game.level_item_display[i]), Weapon):
-                if this_game.level_item_display[i]  in player.Weapons:
-                    temp.append(this_game.level_item_display[i])
-            else:
-                temp.append(this_game.level_item_display[i])
-        this_game.level_item_display = temp
+    # if len(player.Weapons) == player.MAX_CAPACITTY and not this_game.cleaned_weapons:
+    #     print("Se llenó armas")
+    #     this_game.clean_weapons()
+    #     temp = []
+    #     for i in range(0, len(this_game.level_item_display)):
+    #         if issubclass(type(this_game.level_item_display[i]), Weapon):
+    #             if this_game.level_item_display[i]  in player.Weapons:
+    #                 temp.append(this_game.level_item_display[i])
+    #         else:
+    #             temp.append(this_game.level_item_display[i])
+    #     this_game.level_item_display = temp
 
-    if len(player.Equipment) == player.MAX_CAPACITTY and not this_game.cleaned_equipment:
-        print("Se llenó el equipamiento")
-        this_game.clean_equipment()
-        temp = []
-        for i in range(0, len(this_game.level_item_display)):
-            if issubclass(type(this_game.level_item_display[i]), Equipment):
-                if this_game.level_item_display[i]  in player.Equipment:
-                    temp.append(this_game.level_item_display[i])
-            else:
-                temp.append(this_game.level_item_display[i])
-        this_game.level_item_display = temp
+    # if len(player.Equipment) == player.MAX_CAPACITTY and not this_game.cleaned_equipment:
+    #     print("Se llenó el equipamiento")
+    #     this_game.clean_equipment()
+    #     temp = []
+    #     for i in range(0, len(this_game.level_item_display)):
+    #         if issubclass(type(this_game.level_item_display[i]), Equipment):
+    #             if this_game.level_item_display[i]  in player.Equipment:
+    #                 temp.append(this_game.level_item_display[i])
+    #         else:
+    #             temp.append(this_game.level_item_display[i])
+    #     this_game.level_item_display = temp
 
     print("====================================")
     print("ITEMS PARA DISPLAY")
@@ -383,13 +390,18 @@ def get_chest_item():
     for i in player.Equipment:
         items_to_chest.append(i)
 
-
     selected_items = []
 
     for i in items_to_chest:
         print(f"Objeto: {i.name} Tier: {i.tier}")
         if i.tier != i.max_tier:
             selected_items.append(i)
+
+    temp = []
+    for i in selected_items:
+        temp.append(i.type)
+    selected_items = temp
+
 
     if selected_items == []:
         selected_items = [GoldCoin((player.pos.x + 100, player.pos.y + 100), space, Enemy.COIN_IMAGE), FloorChicken((player.pos.x + 100, player.pos.y + 100), space, Enemy.CHICKEN_IMAGE)]
@@ -451,7 +463,10 @@ def draw_chest_screen():
 
     if this_game.chest_open:
 
-        screen.blit(this_game.chest_item.image, (WIDTH / 2 - this_game.chest_item.image.get_width()/ 2, 250))
+        if not isinstance(this_game.chest_item, FactoryEquipment.EquipmentCatalog) and not isinstance(this_game.chest_item, FactoryWeapon.WeaponCatalog):
+            screen.blit(this_game.chest_item.image, (WIDTH / 2 - this_game.chest_item.image.get_width()/ 2, 250))
+        else:
+            screen.blit(this_game.chest_item.value.IMAGE, (WIDTH / 2 - this_game.chest_item.value.IMAGE.get_width()/ 2, 250))
         if resume_button.draw(screen):
             add_chest_item()
             this_game.current_state.change_to_play()
@@ -468,9 +483,14 @@ def draw_level_up_screen():
             player.add_item(this_game.selected_item_display[0])
             this_game.current_state.change_to_play()
             this_game.change_paused()
-        item_text_1 = title_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
-        screen.blit(this_game.selected_item_display[0].image, (WIDTH / 2 - 160, 235))
-        screen.blit(item_text_1, (WIDTH / 2, 245))
+        if len(this_game.level_item_display) == 0:
+            item_text_1 = title_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
+            screen.blit(this_game.selected_item_display[0].image, (WIDTH / 2 - 160, 235))
+            screen.blit(item_text_1, (WIDTH / 2, 245))
+        else:
+            item_text_1 = title_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
+            screen.blit(this_game.selected_item_display[0].value.IMAGE, (WIDTH / 2 - 160, 235))
+            screen.blit(item_text_1, (WIDTH / 2, 245))
 
 
     if len(this_game.selected_item_display) > 1:
@@ -478,9 +498,14 @@ def draw_level_up_screen():
             player.add_item(this_game.selected_item_display[1])
             this_game.current_state.change_to_play()
             this_game.change_paused()
-        item_text_2 = title_font.render(f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
-        screen.blit(this_game.selected_item_display[1].image, (WIDTH / 2 - 160, 400))
-        screen.blit(item_text_2, (WIDTH / 2, 410))
+        if len(this_game.level_item_display) == 0:
+            item_text_2 = title_font.render(f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
+            screen.blit(this_game.selected_item_display[1].image, (WIDTH / 2 - 160, 400))
+            screen.blit(item_text_2, (WIDTH / 2, 400))
+        else:
+            item_text_2 = title_font.render(f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
+            screen.blit(this_game.selected_item_display[1].value.IMAGE, (WIDTH / 2 - 160, 400))
+            screen.blit(item_text_2, (WIDTH / 2, 410))
 
 
 

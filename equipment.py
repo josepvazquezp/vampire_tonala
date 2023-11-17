@@ -1,19 +1,21 @@
 from __future__ import annotations
+from enum import Enum
 import pygame
 import math
 import pymunk
 from abc import ABC, abstractmethod
 
-class Equipment(ABC):
+class Equipment():
     '''  '''
 
-    def __init__(self,nombre: str, max_tier: int, associated_stat: int, modifier: float, image) -> None:
-        self.name: str = nombre
+    def __init__(self, max_tier: int, associated_stat: int, modifier: float, name: str, type) -> None:
         self.tier: int = 1
         self.max_tier: int  = max_tier
         self.associated_stat : int  = associated_stat
         self.modifier: float = modifier
-        self.image = pygame.transform.scale(image, (image.get_width() * 0.5, image.get_height() * 0.5))
+        self.name = name
+        self.type = type
+        #self.image = pygame.transform.scale(image, (image.get_width() * 0.5, image.get_height() * 0.5))
 
     def upgrade_equipment(self) -> bool:
         '''  '''
@@ -26,26 +28,54 @@ class Equipment(ABC):
         return self.associated_stat, self.modifier
     
 
-class Armor(Equipment):
+class SpecificEquipment(ABC):
+    def create(self):
+        pass
+
+
+class Armor(SpecificEquipment):
     IMAGE = pygame.image.load('Assets/Equipment/Sprite-Armor.jpg').convert_alpha()
+    NAME = "armor"
+    STAT = 4
+    MOFIFIER = 1
 
-    def __init__(self) -> None:
-        super().__init__("armor", 5, 4, 1, Armor.IMAGE)
+    def create(self) -> None:
+        return Equipment(5, 4, 1, "armor", FactoryEquipment.EquipmentCatalog.ARMOR)
 
-class HollowHeart(Equipment):
+class HollowHeart(SpecificEquipment):
     IMAGE = pygame.image.load('Assets/Equipment/Sprite-Hollow_Heart.jpg').convert_alpha()
+    NAME = "hollow_heart"
+    STAT = 5
+    MOFIFIER = 0.1
 
-    def __init__(self) -> None:
-        super().__init__("hollow heart", 5, 5, 0.1, HollowHeart.IMAGE)
+    def create(self) -> Equipment:
+        return Equipment( 5, 5, 0.1, "hollow_heart", FactoryEquipment.EquipmentCatalog.HOLLOWHEART)
 
-class Spinach(Equipment):
+class Spinach(SpecificEquipment):
     IMAGE = pygame.image.load('Assets/Equipment/Sprite-Spinach.jpg').convert_alpha()
+    NAME = "spinach"
+    STAT = 6
+    MOFIFIER = 0.1
 
-    def __init__(self) -> None:
-        super().__init__("spinach", 5, 6, 0.1, Spinach.IMAGE)
+    def create(self)-> Equipment:
+        return Equipment(5, 6, 0.1, "spinach", FactoryEquipment.EquipmentCatalog.SPINACH)
 
-class Wings(Equipment):
+class Wings(SpecificEquipment):
     IMAGE = pygame.image.load('Assets/Equipment/Sprite-Wings.jpg').convert_alpha()
+    NAME = "wings"
+    STAT = 7
+    MOFIFIER = 0.1
 
-    def __init__(self) -> None:
-        super().__init__("wings", 5, 7, 0.1, Wings.IMAGE)
+    def create(self) -> Equipment:
+        return Equipment( 5, 7, 0.1, "wings", FactoryEquipment.EquipmentCatalog.WINGS)
+
+
+class FactoryEquipment():
+    class EquipmentCatalog(Enum):
+        ARMOR = Armor()
+        HOLLOWHEART = HollowHeart()
+        SPINACH = Spinach()
+        WINGS = Wings()
+
+    def create_equipment(self, type):
+        return type.value.create()
