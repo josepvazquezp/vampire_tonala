@@ -6,20 +6,26 @@ import math
 
 import pymunk
 from settings import *
-# import button
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 class CameraGroup(pygame.sprite.Group):
+    """
+    Un grupo de sprites personalizado que representa una cámara en un entorno de juego.
 
-    # RESUME_BUTTON = button.Button(WIDTH / 2 - pygame.image.load("Assets/buttons/button_resume.png").convert_alpha().get_width() / 2, 400, pygame.image.load("Assets/buttons/button_resume.png").convert_alpha(), 1)
-    # QUIT_BUTTON = button.Button(WIDTH / 2 - pygame.image.load("Assets/buttons/button_quit.png").convert_alpha().get_width() / 2, 550, pygame.image.load("Assets/buttons/button_quit.png").convert_alpha(), 1)
-    # OPEN_BUTTON = button.Button(WIDTH / 2 - pygame.image.load("Assets/buttons/button_open.png").convert_alpha().get_width()/2, 500, pygame.image.load("Assets/buttons/button_open.png").convert_alpha(), 1)
+    Gestiona la visualización de sprites en relación a una cámara que sigue a un objetivo
+    y dibuja un fondo que se ajusta a la posición de la cámara.
 
-    # SURFACE = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    Atributos:
+        display_surface (Surface): Superficie de visualización de Pygame.
+        offset (Vector2): Desplazamiento de la cámara en relación al objetivo.
+        background (Surface): Superficie de Pygame para el fondo del juego.
+        background_rect (Rect): Rectángulo que define la posición y el tamaño del fondo.
 
-    # TREASURE_B = pygame.image.load("Assets/screens/treasure_background.png").convert_alpha()
-
+    Métodos:
+        center_target_camera: Centra la cámara en un objetivo específico.
+        custom_draw: Dibuja el fondo y los sprites en la superficie de visualización en función del desplazamiento de la cámara.
+    """
     def __init__(self):
         super().__init__()
         self.display_surface = pygame.display.get_surface()
@@ -32,53 +38,43 @@ class CameraGroup(pygame.sprite.Group):
         self.background_rect = self.background.get_rect(center=(WIDTH//2, HEIGHT//2))  
 
     def center_target_camera(self, target):
+        """
+        Centra la cámara en el objetivo dado.
+
+        Args:
+            target: El objetivo (generalmente un sprite) que la cámara debe seguir.
+        """
+        # ...
         self.offset.x= WIDTH/2 - target.body.position[0]
         self.offset.y= HEIGHT/2 - target.body.position[1]
 
 
-    def custom_draw(self,player):
+    def custom_draw(self, player):
+        """
+        Dibuja el fondo y los sprites en la superficie de visualización.
 
+        Ajusta la posición de los sprites y el fondo en función de la posición del jugador
+        y el desplazamiento de la cámara. Ordena los sprites basándose en su posición y 
+        los dibuja en la superficie de visualización.
+
+        Args:
+            player: El jugador u objeto que la cámara está siguiendo.
+        """
         self.center_target_camera(player)
 
-        #background
-        ground_offset= self.background_rect.topleft + self.offset
-        self.display_surface.blit(self.background, ground_offset)
+        # Calcular el offset del fondo
+        background_width, background_height = self.background.get_size()
+        top_left_x = (self.background_rect.left + self.offset.x) % background_width
+        top_left_y = (self.background_rect.top + self.offset.y) % background_height
 
-        #Esto nos permite hacer draw a elementos unos sobre otro dependiendo de su posicion en y
-        for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery):
-            offset_position = sprite.rect.topleft+self.offset
+        # Dibujar el fondo repetido
+        for x in range(-background_width, WIDTH + background_width, background_width):
+            for y in range(-background_height, HEIGHT + background_height, background_height):
+                self.display_surface.blit(self.background, (x + top_left_x, y + top_left_y))
+
+        # Dibujar sprites
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
+            offset_position = sprite.rect.topleft + self.offset
             self.display_surface.blit(sprite.image, offset_position)
-
-    # def draw_time(self, min, seconds):
-    #     font = pygame.font.Font(None, 50)
-    #     hp_text = font.render(f'Time: {min}:{seconds}', True, (255, 255, 255))
-    #     self.display_surface.blit(hp_text, (WIDTH / 2 - 50, 10))
-    
-    # def draw_pause(self, game, stop_event):
-    #     font = pygame.font.Font(None, 48)
-
-    #     pygame.draw.rect(CameraGroup.SURFACE, (0, 0, 0, 150), [0,0, WIDTH, HEIGHT])
-    
-    #     self.display_surface.blit(CameraGroup.SURFACE, (0,0))
-    #     pause_text = font.render(f'GAME PAUSED', True, (255, 255, 255))
-    #     self.display_surface.blit(pause_text, (WIDTH / 2 - 100, 100))
-
-    #     if CameraGroup.RESUME_BUTTON.draw(screen):
-    #         game.current_state.change_to_play()
-    #         game.change_paused()
-
-    #     if CameraGroup.QUIT_BUTTON.draw(screen):
-    #         stop_event.set()
-    #         pygame.quit()
-    #         exit()
-    
-    # def draw_chest(self, game):
-    #     self.display_surface.blit(CameraGroup.SURFACE, (0,0))
-    #     self.display_surface.blit(CameraGroup.TREASURE_B, (WIDTH/2 - 175,20))
-
-    #     if CameraGroup.OPEN_BUTTON.draw(screen):
-    #         game.current_state.change_to_play()
-    #         game.change_paused()
-
 
 all_sprites = CameraGroup()

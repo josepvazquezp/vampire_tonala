@@ -8,6 +8,9 @@ from player import *
 from projectile import *
 import random
 
+from abc import ABC, abstractmethod
+from enum import Enum
+
 import pymunk
 '''
 El bat tiene HP: 1, power: 5, speed: 1.4
@@ -35,8 +38,7 @@ class Enemy(pygame.sprite.Sprite):
         self.attackCooldown = 0
 
         # Image and hitbox
-        self.image = image.convert_alpha()
-        self.image = pygame.transform.rotozoom(self.image, 0, .4)
+        self.image = pygame.transform.rotozoom(image.convert_alpha(), 0, .4)
         self.rect = self.image.get_rect()
 
         # Position and movement
@@ -74,8 +76,10 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.centerx = self.position.x
         self.rect.centery = self.position.y
         self.body.position = self.position.x, self.position.y
+
     def is_dead(self):
         return self.hp <= 0
+    
     def get_vector_distance(self, player_vector, enemy_vector):
         return (player_vector - enemy_vector).magnitude()
 
@@ -119,28 +123,48 @@ class Enemy(pygame.sprite.Sprite):
     def restoreCooldown(self):
         self.attackCooldown = self.cooldown
 
-class Pipeestrello(Enemy):
+    def get_enemy_hitbox_rect(self):
+        return self.rect
+
+# 1.- Interface para enemies
+class SpecificEnemy(ABC):
+    def create(self, position, player, space) -> Enemy:
+        ''' Crea un enemigo especifico y retorna ese objeto'''
+        pass
+
+
+class Pipeestrello(SpecificEnemy):
     IMAGE = pygame.image.load('Assets/Enemies/Sprite-BAT1.jpg')
 
-    def __init__(self, position, player, space):
-        super().__init__(position, 1, 1.4, 5, Pipeestrello.IMAGE, player, space, 15)
+    def create(self, position, player, space) -> Enemy:
+        return Enemy(position, 1, 1.4, 5, Pipeestrello.IMAGE, player, space, 15)
 
-class Mantichana(Enemy):
+class Mantichana(SpecificEnemy):
     IMAGE = pygame.image.load('Assets/Enemies/Sprite-XLMANTIS.jpg')
 
-    def __init__(self, position, player, space):
-        super().__init__(position, 150, 0.8, 20, Mantichana.IMAGE, player, space, 40)
+    def create(self, position, player, space) -> Enemy:
+        return Enemy(position, 150, 0.8, 20, Mantichana.IMAGE, player, space, 40)
 
-class Reaper(Enemy):
+class Reaper(SpecificEnemy):
     IMAGE = pygame.image.load('Assets/Enemies/Sprite-BOSS_XLDEATH.jpg')
 
-    def __init__(self, position, player, space):
-        super().__init__(position, 600, 5, 60, Reaper.IMAGE, player, space, 40)
+    def create(self, position, player, space) -> Enemy:
+        return Enemy(position, 600, 10, 9999, Reaper.IMAGE, player, space, 40)
 
-class Skullone(Enemy):
+class Skullone(SpecificEnemy):
     IMAGE = pygame.image.load('Assets/Enemies/Sprite-SKULLNOAURA.jpg')
 
-    def __init__(self, position, player, space):
-        super().__init__(position, 30, 1, 10, Skullone.IMAGE, player, space, 25)
+    def create(self, position, player, space) -> Enemy:
+        return Enemy(position, 30, 1, 10, Skullone.IMAGE, player, space, 25)
+
+class FactoryEnemy():
+    class EnemyCatalog(Enum):
+             PIPEESTRELLO = Pipeestrello()
+             SKULLONE = Skullone()
+             MANTICHANA = Mantichana()
+             REAPER = Reaper()
+     
+    def create_enemy(self, position, player, space, type) -> Enemy:
+        return type.value.create(position, player, space)
 
 enemy_group = pygame.sprite.Group()
