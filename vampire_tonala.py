@@ -36,24 +36,25 @@ space.gravity = (0, 0)
 pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
 
-background = pygame.transform.scale(pygame.image.load('Background/background.jpg').convert(), (WIDTH, HEIGHT))
+background = pygame.transform.scale(pygame.image.load(
+    'Background/background.jpg').convert(), (WIDTH, HEIGHT))
 # Create player
 player = Player(100, 5, space)
-#reaper = Reaper((800,620), reaperImage, player, space)
-#Spawn variables
+# reaper = Reaper((800,620), reaperImage, player, space)
+# Spawn variables
 
 
 player.equip_weapon(FactoryWeapon.WeaponCatalog.KNIFE)
 
-#Spawn variables
+# Spawn variables
 max_enemies = 12
 angle_increment = 360 / max_enemies
 current_angle = 0  # To keep track of the last spawn angle
 SPAWN_RADIUS = 600  # radius around the player within which enemies will spawn
 spawned_enemies = []  # List to keep track of spawned enemies
-#ENEMY_TYPES = [1,2,3]  # Add more enemy types as needed
-#ENEMY_SPAWN_RATE = [20, 40, 60]  # The game time (in seconds) at which new enemy types are introduced
-#current_enemy_types = [1]  # List to keep track of current enemy types
+# ENEMY_TYPES = [1,2,3]  # Add more enemy types as needed
+# ENEMY_SPAWN_RATE = [20, 40, 60]  # The game time (in seconds) at which new enemy types are introduced
+# current_enemy_types = [1]  # List to keep track of current enemy types
 
 
 all_sprites.add(player)
@@ -67,20 +68,21 @@ enemyCooldown = []
 
 surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
+
 class Game:
-    
+
     def __init__(self) -> None:
-        self.current_state : state.State = state.PlayState(self)
+        self.current_state: state.State = state.PlayState(self)
         self.paused = False
         self.selected_item_display = []
-        self.level_item_display = [ FactoryWeapon.WeaponCatalog.KNIFE, FactoryWeapon.WeaponCatalog.FIRE_WAND, 
+        self.level_item_display = [FactoryWeapon.WeaponCatalog.KNIFE, FactoryWeapon.WeaponCatalog.FIRE_WAND,
                                    FactoryWeapon.WeaponCatalog.MAGIC_WAND, equipment.FactoryEquipment.EquipmentCatalog.ARMOR,
                                    equipment.FactoryEquipment.EquipmentCatalog.HOLLOWHEART, equipment.FactoryEquipment.EquipmentCatalog.SPINACH,
                                    equipment.FactoryEquipment.EquipmentCatalog.WINGS]
-        self.cleaned_weapons : bool = False
-        self.cleaned_equipment : bool = False
+        self.cleaned_weapons: bool = False
+        self.cleaned_equipment: bool = False
 
-        #self.equipment_available = [equipment.Armor(), equipment.HollowHeart(), equipment.Spinach(), equipment.Wings()]
+        # self.equipment_available = [equipment.Armor(), equipment.HollowHeart(), equipment.Spinach(), equipment.Wings()]
 
         self.chest = None
         self.chest_open = False
@@ -89,7 +91,6 @@ class Game:
     def change_state(self, new_state: state.State):
         ''' Método que cambia el estado '''
         self.current_state = new_state
-
 
     def change_paused(self):
         ''' Metodo que cambia entre pausa y jugar '''
@@ -109,50 +110,55 @@ enemy_spawn_probabilities = {
     # (minute, enemy_type): probability
     # The sum of probabilities for each minute should be 1
     (0, 1): 1,
-    (0, 2): 0,  
+    (0, 2): 0,
     (0, 3): 0,
     (0, 4): 0,
     # The sum of probabilities for each minute should be 2
-    (1, 1): 0.7,  
-    (1, 2): 0.28,  
+    (1, 1): 0.7,
+    (1, 2): 0.28,
     (1, 3): 0.02,
     (1, 4): 0,
     # The sum of probabilities for each minute should be 3
-    (2, 1): 0.3,  
-    (2, 2): 0.65,  
-    (2, 3): 0.05, 
+    (2, 1): 0.3,
+    (2, 2): 0.65,
+    (2, 3): 0.05,
     (2, 4): 0,
     # The sum of probabilities for each minute should be 4
-    (3, 1): 0.05,  
-    (3, 2): 0.45,  
+    (3, 1): 0.05,
+    (3, 2): 0.45,
     (3, 3): 0.5,
     (3, 4): 0,
     # The sum of probabilities for each minute should be 5
-    (4, 1): 0,  
-    (4, 2): 0.25,  
-    (4, 3): 0.75, 
+    (4, 1): 0,
+    (4, 2): 0.25,
+    (4, 3): 0.75,
     (4, 4): 0,
     # The sum of probabilities for each minute should be 6
-    (5, 1): 0,  
-    (5, 2): 0,  
+    (5, 1): 0,
+    (5, 2): 0,
     (5, 3): 0,
-    (5, 4): 1, 
+    (5, 4): 1,
 
 }
 
+
 def spawn_enemy(player, angle, enemy_type):
-    ppx=player.body.position[0]
-    ppy=player.body.position[1]
+    ppx = player.body.position[0]
+    ppy = player.body.position[1]
     x = ppx + SPAWN_RADIUS * math.cos(math.radians(angle))
     y = ppy + SPAWN_RADIUS * math.sin(math.radians(angle))
     if enemy_type == 1:
-        enemy = fact_enemy.create_enemy((x, y), player, space, FactoryEnemy.EnemyCatalog.PIPEESTRELLO) 
+        enemy = fact_enemy.create_enemy(
+            (x, y), player, space, FactoryEnemy.EnemyCatalog.PIPEESTRELLO)
     elif enemy_type == 2:
-        enemy = fact_enemy.create_enemy((x, y), player, space, FactoryEnemy.EnemyCatalog.SKULLONE) 
+        enemy = fact_enemy.create_enemy(
+            (x, y), player, space, FactoryEnemy.EnemyCatalog.SKULLONE)
     elif enemy_type == 3:
-        enemy = fact_enemy.create_enemy((x, y), player, space, FactoryEnemy.EnemyCatalog.MANTICHANA)
+        enemy = fact_enemy.create_enemy(
+            (x, y), player, space, FactoryEnemy.EnemyCatalog.MANTICHANA)
     elif enemy_type == 4:
-        enemy = fact_enemy.create_enemy((x, y), player, space, FactoryEnemy.EnemyCatalog.REAPER)
+        enemy = fact_enemy.create_enemy(
+            (x, y), player, space, FactoryEnemy.EnemyCatalog.REAPER)
     spawned_enemies.append(enemy)
 
 
@@ -186,7 +192,8 @@ def updateSpawn():
     global current_angle
     if len(spawned_enemies) < max_enemies:
         # Calculate probabilities for the current minute
-        minute_probabilities = [(enemy_type, prob) for (min, enemy_type), prob in enemy_spawn_probabilities.items() if min == gameMin]
+        minute_probabilities = [(enemy_type, prob) for (
+            min, enemy_type), prob in enemy_spawn_probabilities.items() if min == gameMin]
 
         # If there are no probabilities defined for this minute, exit the function
         if not minute_probabilities:
@@ -208,56 +215,72 @@ def updateSpawn():
         current_angle += angle_increment + random.uniform(-10, 10)
         if current_angle >= 360:
             current_angle = 0
-            
+
+
 def timer(segundos):
-    global gameSeconds, gameMin, playing, current_enemy_types,max_enemies
+    """
+    A timer function that controls various game mechanics based on time elapsed.
+
+    This function is intended to be run in a separate thread and updates game seconds, 
+    manages enemy spawn rates, and handles other time-based game events.
+
+    Args:
+        segundos (int): The initial time in seconds to start the timer from.
+
+    Globals:
+        gameSeconds (int): The game's current seconds counter.
+        gameMin (int): The game's current minute counter.
+        playing (bool): Flag indicating if the game is currently being played.
+        current_enemy_types (list): A list of current enemy types in the game.
+        max_enemies (int): The maximum number of enemies that can be spawned.
+    """
+    global gameSeconds, gameMin, playing, current_enemy_types, max_enemies
     milis = 0
-    maxenemy_spawn_control=0
+    maxenemy_spawn_control = 0
     while playing:
         if stop_event.is_set():
             playing = False
         if not this_game.paused:
             milis += 1
-        if(milis == 10):
+        if (milis == 10):
             milis = 0
-            
-            #incremento el numero de enemigos de manera speudoaleatoria
-            maxenemy_spawn_control += choice([1,2])
+
+            # incremento el numero de enemigos de manera speudoaleatoria
+            maxenemy_spawn_control += choice([1, 2])
             gameSeconds += 1
-            
+
             if maxenemy_spawn_control >= 10:
                 max_enemies += 2
                 maxenemy_spawn_control = 0
-                
+
             if gameSeconds == 60:
                 gameMin += 1
                 gameSeconds = 0
 
-                #randomizo el numero de enemigos que se reduce cada vez que cambien las condiciones de spawn
-                if(gameMin == 1):
-                    max_enemies -= choice([1,2,3])
-                elif(gameMin == 2):
-                    max_enemies -= choice([2,4,6])
-                elif(gameMin == 3):
-                    max_enemies -= choice([4,6,8])
-                elif(gameMin == 4):
-                    max_enemies -= choice([6,8,10])
-                elif(gameMin == 5):
-                    flag=False
+                # randomizo el numero de enemigos que se reduce cada vez que cambien las condiciones de spawn
+                if (gameMin == 1):
+                    max_enemies -= choice([1, 2, 3])
+                elif (gameMin == 2):
+                    max_enemies -= choice([2, 4, 6])
+                elif (gameMin == 3):
+                    max_enemies -= choice([4, 6, 8])
+                elif (gameMin == 4):
+                    max_enemies -= choice([6, 8, 10])
+                elif (gameMin == 5):
+                    flag = False
                     for i in spawned_enemies:
-                        if flag==True:
+                        if flag == True:
                             i.take_damage(1000)
                         else:
-                            flag=True
-                    max_enemies =1
-                    
+                            flag = True
+                    max_enemies = 1
+
             for ene in enemyCooldown:
                 ene.attackCooldown -= 1
 
-                if(ene.attackCooldown == 0):
+                if (ene.attackCooldown == 0):
                     enemyCooldown.remove(ene)
 
-        
         player.using_weapon()
 
         time.sleep(0.1)
@@ -266,16 +289,42 @@ def timer(segundos):
 hilo = threading.Thread(target=timer, args=(10,))
 hilo.start()
 
+
 def draw_entity(screen, entity):
+    """
+    Draws a given entity on the screen.
+
+    This function is responsible for rendering entities on the game screen. It checks the type of the entity's shape 
+    and draws it accordingly.
+
+    Args:
+        screen (pygame.Surface): The screen or surface on which the entity is to be drawn.
+        entity (Entity): The entity to be drawn.
+    """
     for shape in entity.body.shapes:
         if isinstance(shape, pymunk.Circle):
             pos_x, pos_y = map(int, shape.body.position)
-            pygame.draw.circle(screen, (255, 0, 0), (pos_x, pos_y), int(shape.radius))
+            pygame.draw.circle(screen, (255, 0, 0),
+                               (pos_x, pos_y), int(shape.radius))
 
-#Manejadores de Colisiones
-#=========================================================================================================
+# Manejadores de Colisiones
+# =========================================================================================================
+
 
 def enemy_hit_player(self, arbiter, space):
+    """
+    Handles collision between enemy and player.
+
+    This function is triggered when there is a collision between the player and an enemy. 
+    It checks for specific conditions and applies damage to the player if necessary.
+
+    Args:
+        arbiter: The arbiter for the collision.
+        space (pymunk.Space): The space where the collision is taking place.
+
+    Returns:
+        bool: True if the collision is handled, False otherwise.
+    """
     for ene in Enemy.ENEMIES:
         if pygame.Rect.colliderect(player.rect, ene.rect) and ene.attackCooldown == 0:
             player.take_damage(ene.power)
@@ -288,10 +337,24 @@ def enemy_hit_player(self, arbiter, space):
             ene.restoreCooldown()
             enemyCooldown.append(ene)
             return True
-        
+
     return False
 
+
 def player_pick_item(self, arbiter, space):
+    """
+    Handles the player picking up an item.
+
+    This function is called when there is a collision between the player and an item. 
+    It applies the item's effects to the player and removes the item from the game.
+
+    Args:
+        arbiter: The arbiter for the collision.
+        space (pymunk.Space): The space where the collision is taking place.
+
+    Returns:
+        bool: True if the item is picked up, False otherwise.
+    """
     for it in Item.ITEMS:
         if pygame.Rect.colliderect(player.rect, it.rect):
             stat, mod = it.pick_up()
@@ -302,10 +365,24 @@ def player_pick_item(self, arbiter, space):
 
             it.destroy()
             return True
-    
+
     return False
 
+
 def player_pick_chest(self, arbiter, space):
+    """
+    Handles the player interacting with a chest.
+
+    This function is triggered when the player collides with a chest. It changes the game state to allow the player
+    to interact with the chest.
+
+    Args:
+        arbiter: The arbiter for the collision.
+        space (pymunk.Space): The space where the collision is taking place.
+
+    Returns:
+        bool: True if the chest is interacted with, False otherwise.
+    """
     for che in Chest.CHESTS:
         if pygame.Rect.colliderect(player.rect, che.rect):
             this_game.chest = che
@@ -313,7 +390,21 @@ def player_pick_chest(self, arbiter, space):
             return True
     return False
 
+
 def projectile_hit_enemigo(self, arbiter, space):
+    """
+    Handles collision between a projectile and an enemy.
+
+    This function is called when a projectile collides with an enemy. 
+    It applies damage to the enemy and handles the destruction of the projectile.
+
+    Args:
+        arbiter: The arbiter for the collision.
+        space (pymunk.Space): The space where the collision is taking place.
+
+    Returns:
+        bool: True if the collision is handled, False otherwise.
+    """
     for proj in Projectile.PROJECTILES:
         for ene in Enemy.ENEMIES:
             if pygame.Rect.colliderect(proj.rect, ene.rect):
@@ -321,39 +412,46 @@ def projectile_hit_enemigo(self, arbiter, space):
                 proj.destroy_projectile()
                 ene.take_damage(temp)
                 return True
-    
+
     return False
 
+
 handler = space.add_collision_handler(1, 2)
-handler.pre_solve =  enemy_hit_player
+handler.pre_solve = enemy_hit_player
 
 item_hanlder = space.add_collision_handler(1, 3)
 item_hanlder.begin = player_pick_item
 
 
 chest_handler = space.add_collision_handler(1, 4)
-chest_handler.begin =  player_pick_chest
+chest_handler.begin = player_pick_chest
 
 handler2 = space.add_collision_handler(3, 2)
-handler2.begin =  projectile_hit_enemigo
-#=========================================================================================================
+handler2.begin = projectile_hit_enemigo
+# =========================================================================================================
 
 
-
-#Pantallas
-#=========================================================================================================
-resume_img = pygame.image.load("Assets/buttons/button_resume.png").convert_alpha()
-resume_button = button.Button(WIDTH/2 - resume_img.get_width()/2, 400, resume_img, 1)
+# Pantallas
+# =========================================================================================================
+resume_img = pygame.image.load(
+    "Assets/buttons/button_resume.png").convert_alpha()
+resume_button = button.Button(
+    WIDTH/2 - resume_img.get_width()/2, 400, resume_img, 1)
 
 open_img = pygame.image.load("Assets/buttons/button_open.png").convert_alpha()
-open_button = button.Button(WIDTH/2 - resume_img.get_width()/2, 500, open_img, 1)
+open_button = button.Button(
+    WIDTH/2 - resume_img.get_width()/2, 500, open_img, 1)
 
 quit_img = pygame.image.load("Assets/buttons/button_quit.png").convert_alpha()
-quit_button = button.Button(WIDTH/2 - resume_img.get_width()/2, 550, quit_img, 1)
+quit_button = button.Button(
+    WIDTH/2 - resume_img.get_width()/2, 550, quit_img, 1)
 
-treasure_background_img = pygame.image.load("Assets/screens/treasure_background.png").convert_alpha()
-level_up_background_img = pygame.image.load("Assets/screens/level_up_background.png").convert_alpha()
-item_select_img = pygame.image.load("Assets/screens/item_select.png").convert_alpha()
+treasure_background_img = pygame.image.load(
+    "Assets/screens/treasure_background.png").convert_alpha()
+level_up_background_img = pygame.image.load(
+    "Assets/screens/level_up_background.png").convert_alpha()
+item_select_img = pygame.image.load(
+    "Assets/screens/item_select.png").convert_alpha()
 item_button_1 = button.Button(WIDTH / 2 - 240, 170, item_select_img, 1)
 item_button_2 = button.Button(WIDTH / 2 - 240, 350, item_select_img, 1)
 
@@ -362,16 +460,21 @@ title_font = pygame.font.Font(None, 48)
 items_font = pygame.font.Font(None, 40)
 
 
-#Este arreglo debe estar cargado con todos los items y armas disponibles
-#Cuando se maxee algo, se quita de la lista
-#Cuando se llegue a 2 o 3 armas, todas las demás armas se borran de la lista
+# Este arreglo debe estar cargado con todos los items y armas disponibles
+# Cuando se maxee algo, se quita de la lista
+# Cuando se llegue a 2 o 3 armas, todas las demás armas se borran de la lista
 
 
-#Este arreglo toma dos items random para desplegar en la pantalla de Level Up
-
+# Este arreglo toma dos items random para desplegar en la pantalla de Level Up
 
 
 def prepare_level_up():
+    """
+    Prepares the game for the level-up phase.
+
+    This function is triggered when the player is eligible for a level-up. It pauses the game, changes the game state to level-up, 
+    and prepares the display items for the level-up screen based on the player's current inventory and equipment status.
+    """
     player.level_up()
     this_game.change_paused()
     this_game.current_state.change_to_level_up()
@@ -422,17 +525,18 @@ def prepare_level_up():
         print(this_game.level_item_display[i].name)
     print("====================================")
 
-
     if len(this_game.level_item_display) == 0:
-        this_game.selected_item_display.append(GoldCoin((player.pos.x + 100, player.pos.y + 100), space, Enemy.COIN_IMAGE))
-        this_game.selected_item_display.append(FloorChicken((player.pos.x + 100, player.pos.y + 100), space, Enemy.CHICKEN_IMAGE))
+        this_game.selected_item_display.append(
+            GoldCoin((player.pos.x + 100, player.pos.y + 100), space, Enemy.COIN_IMAGE))
+        this_game.selected_item_display.append(FloorChicken(
+            (player.pos.x + 100, player.pos.y + 100), space, Enemy.CHICKEN_IMAGE))
         print("====================================")
         print("Items")
         for i in range(0, len(this_game.selected_item_display)):
             print(this_game.selected_item_display[i])
         print(f"Cantidad: {len(this_game.selected_item_display)}")
         print("====================================")
-    
+
     elif len(this_game.level_item_display) == 1:
         this_game.selected_item_display.append(this_game.level_item_display[0])
     else:
@@ -440,13 +544,26 @@ def prepare_level_up():
         for i in range(0, 2):
             this_game.selected_item_display.append(random.choice(temp_poll))
             temp_poll.remove(this_game.selected_item_display[i])
-        
+
 
 def prepare_chest():
+    """
+    Prepares the game for the chest interaction phase.
+
+    This function is called when the player interacts with a chest. It pauses the game and changes the game state to allow 
+    chest interaction.
+    """
     this_game.change_paused()
     this_game.current_state.change_to_chest()
-    
+
+
 def get_chest_item():
+    """
+    Determines and handles the item obtained from the chest.
+
+    This function selects an item from the chest based on certain game conditions and player's current inventory. 
+    It then updates the game state to reflect the item obtained.
+    """
     items_to_chest = []
     for i in player.Weapons:
         items_to_chest.append(i)
@@ -465,10 +582,9 @@ def get_chest_item():
         temp.append(i.type)
     selected_items = temp
 
-
     if selected_items == []:
-        selected_items = [GoldCoin((player.pos.x + 100, player.pos.y + 100), space, Enemy.COIN_IMAGE), FloorChicken((player.pos.x + 100, player.pos.y + 100), space, Enemy.CHICKEN_IMAGE)]
-    
+        selected_items = [GoldCoin((player.pos.x + 100, player.pos.y + 100), space, Enemy.COIN_IMAGE),
+                          FloorChicken((player.pos.x + 100, player.pos.y + 100), space, Enemy.CHICKEN_IMAGE)]
 
     print("Selected")
     print(selected_items)
@@ -479,31 +595,50 @@ def get_chest_item():
 
 
 def add_chest_item():
+    """
+    Adds the obtained chest item to the player's inventory.
+
+    This function is triggered after the player interacts with the chest and an item is selected. It adds the selected item 
+    to the player's inventory and updates the game state.
+    """
     player.add_item(this_game.chest_item)
     this_game.chest_open = False
 
 
 def draw_play_screen():
+    """
+    Draws the play screen of the game.
+
+    This function is responsible for rendering the game's play screen, including the game environment, player, enemies, and other in-game elements.
+    """
 
     pass
 
+
 def draw_pause_screen():
- 
-    pygame.draw.rect(surface, (0, 0, 0, 150), [0,0, WIDTH, HEIGHT])
-    
-    screen.blit(surface, (0,0))
+    """
+    Draws the pause screen of the game.
+
+    This function is called when the game is paused. It displays the pause menu, including game statistics and options to resume or quit the game.
+    """
+
+    pygame.draw.rect(surface, (0, 0, 0, 150), [0, 0, WIDTH, HEIGHT])
+
+    screen.blit(surface, (0, 0))
     pause_text = title_font.render(f'GAME PAUSED', True, (255, 255, 255))
     screen.blit(pause_text, (WIDTH / 2 - 100, 100))
-    pause_text = title_font.render(f'Max HP: {player.max_hp}', True, (255, 255, 255))
+    pause_text = title_font.render(
+        f'Max HP: {player.max_hp}', True, (255, 255, 255))
     screen.blit(pause_text, (WIDTH / 2 - 100, 200))
-    pause_text = title_font.render(f'Armor: {player.armor}', True, (255, 255, 255))
+    pause_text = title_font.render(
+        f'Armor: {player.armor}', True, (255, 255, 255))
     screen.blit(pause_text, (WIDTH / 2 - 100, 250))
-    pause_text = title_font.render(f'Attack: {player.attack}', True, (255, 255, 255))
+    pause_text = title_font.render(
+        f'Attack: {player.attack}', True, (255, 255, 255))
     screen.blit(pause_text, (WIDTH / 2 - 100, 300))
-    pause_text = title_font.render(f'Move Speed: {player.move_speed}', True, (255, 255, 255))
+    pause_text = title_font.render(
+        f'Move Speed: {player.move_speed}', True, (255, 255, 255))
     screen.blit(pause_text, (WIDTH / 2 - 100, 350))
-    
-
 
     if resume_button.draw(screen):
         this_game.current_state.change_to_play()
@@ -516,9 +651,14 @@ def draw_pause_screen():
 
 
 def draw_chest_screen():
-    
-    screen.blit(surface, (0,0))
-    screen.blit(treasure_background_img, (WIDTH/2 - 175,20))
+    """
+    Draws the chest interaction screen.
+
+    This function is responsible for rendering the screen when the player interacts with a chest. It shows the chest and the item obtained (if any).
+    """
+
+    screen.blit(surface, (0, 0))
+    screen.blit(treasure_background_img, (WIDTH/2 - 175, 20))
 
     if not this_game.chest_open:
         if open_button.draw(screen):
@@ -527,9 +667,11 @@ def draw_chest_screen():
     if this_game.chest_open:
 
         if not isinstance(this_game.chest_item, FactoryEquipment.EquipmentCatalog) and not isinstance(this_game.chest_item, FactoryWeapon.WeaponCatalog):
-            screen.blit(this_game.chest_item.image, (WIDTH / 2 - this_game.chest_item.image.get_width()/ 2, 250))
+            screen.blit(this_game.chest_item.image, (WIDTH / 2 -
+                        this_game.chest_item.image.get_width() / 2, 250))
         else:
-            screen.blit(this_game.chest_item.value.IMAGE, (WIDTH / 2 - this_game.chest_item.value.IMAGE.get_width()/ 2, 250))
+            screen.blit(this_game.chest_item.value.IMAGE, (WIDTH / 2 -
+                        this_game.chest_item.value.IMAGE.get_width() / 2, 250))
         if resume_button.draw(screen):
             add_chest_item()
             this_game.current_state.change_to_play()
@@ -537,9 +679,14 @@ def draw_chest_screen():
 
 
 def draw_level_up_screen():
-    
-    screen.blit(surface, (0,0))
-    screen.blit(level_up_background_img, (WIDTH/2 - 300,20))
+    """
+    Draws the level-up screen.
+
+    This function renders the level-up screen, showing available items or upgrades for the player to choose from when leveling up.
+    """
+
+    screen.blit(surface, (0, 0))
+    screen.blit(level_up_background_img, (WIDTH/2 - 300, 20))
 
     if len(this_game.selected_item_display) > 0:
         if item_button_1.draw(screen):
@@ -547,14 +694,17 @@ def draw_level_up_screen():
             this_game.current_state.change_to_play()
             this_game.change_paused()
         if len(this_game.level_item_display) == 0:
-            item_text_1 = items_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
-            screen.blit(this_game.selected_item_display[0].image, (WIDTH / 2 - 160, 200))
+            item_text_1 = items_font.render(
+                f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
+            screen.blit(
+                this_game.selected_item_display[0].image, (WIDTH / 2 - 160, 200))
             screen.blit(item_text_1, (WIDTH / 2 - 20, 245))
         else:
-            item_text_1 = items_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
-            screen.blit(this_game.selected_item_display[0].value.IMAGE, (WIDTH / 2 - 160, 200))
+            item_text_1 = items_font.render(
+                f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
+            screen.blit(
+                this_game.selected_item_display[0].value.IMAGE, (WIDTH / 2 - 160, 200))
             screen.blit(item_text_1, (WIDTH / 2 - 20, 245))
-
 
     if len(this_game.selected_item_display) > 1:
         if item_button_2.draw(screen):
@@ -562,19 +712,27 @@ def draw_level_up_screen():
             this_game.current_state.change_to_play()
             this_game.change_paused()
         if len(this_game.level_item_display) == 0:
-            item_text_2 = items_font.render(f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
-            screen.blit(this_game.selected_item_display[1].image, (WIDTH / 2 - 160, 400))
+            item_text_2 = items_font.render(
+                f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
+            screen.blit(
+                this_game.selected_item_display[1].image, (WIDTH / 2 - 160, 400))
             screen.blit(item_text_2, (WIDTH / 2 - 20, 400))
         else:
-            item_text_2 = items_font.render(f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
-            screen.blit(this_game.selected_item_display[1].value.IMAGE, (WIDTH / 2 - 160, 400))
+            item_text_2 = items_font.render(
+                f'{this_game.selected_item_display[1].name}', True, (255, 255, 255))
+            screen.blit(
+                this_game.selected_item_display[1].value.IMAGE, (WIDTH / 2 - 160, 400))
             screen.blit(item_text_2, (WIDTH / 2 - 20, 410))
 
 
-
 def draw_game_over_screen():
-    pygame.draw.rect(surface, (255, 0, 0, 150), [0,0, WIDTH, HEIGHT])
-    screen.blit(surface, (0,0))
+    """
+    Draws the game over screen.
+
+    This function is called when the player loses all health points. It displays the game over message and options to quit the game.
+    """
+    pygame.draw.rect(surface, (255, 0, 0, 150), [0, 0, WIDTH, HEIGHT])
+    screen.blit(surface, (0, 0))
 
     game_over_text = title_font.render(f'GAME OVER', True, (255, 255, 255))
     screen.blit(game_over_text, (WIDTH / 2 - 100, 100))
@@ -584,7 +742,17 @@ def draw_game_over_screen():
         pygame.quit()
         exit()
 
+
 def select_screen(screen_name):
+    """
+    Selects and draws the appropriate game screen based on the given screen name.
+
+    This function is responsible for managing the transitions between different game screens like pause, level-up, 
+    chest interaction, and game over screens.
+
+    Args:
+        screen_name (str): The name of the screen to be drawn.
+    """
     if screen_name == "Pause":
         draw_pause_screen()
     elif screen_name == "Level":
@@ -593,8 +761,7 @@ def select_screen(screen_name):
         draw_chest_screen()
     elif screen_name == "Over":
         draw_game_over_screen()
-#=========================================================================================================
-
+# =========================================================================================================
 
 
 while True:
@@ -611,19 +778,17 @@ while True:
                 if this_game.paused and this_game.current_state.name == "Pause":
                     this_game.current_state.change_to_play()
                     this_game.change_paused()
-                    
+
                 elif not this_game.paused and this_game.current_state.name == "Play":
                     this_game.current_state.change_to_pause()
                     this_game.change_paused()
-                
-
 
     # screen.blit(background, (0, 0))
     # all_sprites.draw(screen)
 
     for enemy in spawned_enemies:
         if enemy.is_dead():
-           
+
             spawned_enemies.remove(enemy)
             updateSpawn()
 
@@ -648,18 +813,20 @@ while True:
     screen.blit(hp_text, (10, 70))
 
     font = pygame.font.Font(None, 36)
-    hp_text = font.render(f'Next: {player.next_level_xp}', True, (255, 255, 255))
+    hp_text = font.render(
+        f'Next: {player.next_level_xp}', True, (255, 255, 255))
     screen.blit(hp_text, (10, 100))
 
     font = pygame.font.Font(None, 80)
-    hp_text = font.render(f'Time: {gameMin}:{gameSeconds}', True, (255, 255, 255))
+    hp_text = font.render(
+        f'Time: {gameMin}:{gameSeconds}', True, (255, 255, 255))
     screen.blit(hp_text, (WIDTH / 2 - 100, 10))
 
     font = pygame.font.Font(None, 36)
     hp_text = font.render(f'Feria: {player.gold}', True, (255, 255, 255))
     screen.blit(hp_text, (1000, 10))
 
-    #max enemies display
+    # max enemies display
     font = pygame.font.Font(None, 36)
     hp_text = font.render(f'Max Enemies: {max_enemies}', True, (255, 255, 255))
     screen.blit(hp_text, (1000, 40))
