@@ -103,7 +103,6 @@ class Player(pygame.sprite.Sprite):
             if(weapon == w.type):
                 w.upgrade_weapon()
                 flag = True
-                print(w.tier)
                 break
 
         if(weapon != None and not flag):
