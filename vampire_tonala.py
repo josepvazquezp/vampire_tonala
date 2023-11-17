@@ -547,11 +547,11 @@ def draw_level_up_screen():
             this_game.change_paused()
         if len(this_game.level_item_display) == 0:
             item_text_1 = title_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
-            screen.blit(this_game.selected_item_display[0].image, (WIDTH / 2 - 160, 235))
+            screen.blit(this_game.selected_item_display[0].image, (WIDTH / 2 - 160, 200))
             screen.blit(item_text_1, (WIDTH / 2, 245))
         else:
             item_text_1 = title_font.render(f'{this_game.selected_item_display[0].name}', True, (255, 255, 255))
-            screen.blit(this_game.selected_item_display[0].value.IMAGE, (WIDTH / 2 - 160, 235))
+            screen.blit(this_game.selected_item_display[0].value.IMAGE, (WIDTH / 2 - 160, 200))
             screen.blit(item_text_1, (WIDTH / 2, 245))
 
 

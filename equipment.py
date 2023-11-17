@@ -34,7 +34,7 @@ class SpecificEquipment(ABC):
 
 
 class Armor(SpecificEquipment):
-    IMAGE = pygame.image.load('Assets/Equipment/Sprite-Armor.jpg').convert_alpha()
+    IMAGE = pygame.transform.rotozoom(pygame.image.load('Assets/Equipment/Sprite-Armor.jpg'), 0, .5)
     NAME = "armor"
     STAT = 4
     MOFIFIER = 1
@@ -43,7 +43,7 @@ class Armor(SpecificEquipment):
         return Equipment(5, 4, 1, "armor", FactoryEquipment.EquipmentCatalog.ARMOR)
 
 class HollowHeart(SpecificEquipment):
-    IMAGE = pygame.image.load('Assets/Equipment/Sprite-Hollow_Heart.jpg').convert_alpha()
+    IMAGE = pygame.transform.rotozoom(pygame.image.load('Assets/Equipment/Sprite-Hollow_Heart.jpg'), 0, .5)
     NAME = "hollow_heart"
     STAT = 5
     MOFIFIER = 0.1
@@ -52,7 +52,7 @@ class HollowHeart(SpecificEquipment):
         return Equipment( 5, 5, 0.1, "hollow_heart", FactoryEquipment.EquipmentCatalog.HOLLOWHEART)
 
 class Spinach(SpecificEquipment):
-    IMAGE = pygame.image.load('Assets/Equipment/Sprite-Spinach.jpg').convert_alpha()
+    IMAGE = pygame.transform.rotozoom(pygame.image.load('Assets/Equipment/Sprite-Spinach.jpg'), 0, .5)
     NAME = "spinach"
     STAT = 6
     MOFIFIER = 0.1
@@ -61,7 +61,7 @@ class Spinach(SpecificEquipment):
         return Equipment(5, 6, 0.1, "spinach", FactoryEquipment.EquipmentCatalog.SPINACH)
 
 class Wings(SpecificEquipment):
-    IMAGE = pygame.image.load('Assets/Equipment/Sprite-Wings.jpg').convert_alpha()
+    IMAGE = pygame.transform.rotozoom(pygame.image.load('Assets/Equipment/Sprite-Wings.jpg'), 0, .5)
     NAME = "wings"
     STAT = 7
     MOFIFIER = 0.1
