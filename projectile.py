@@ -7,6 +7,32 @@ import pymunk
 from abc import ABC, abstractmethod
 
 class Projectile(pygame.sprite.Sprite, ABC):
+    """
+    Clase abstracta base para proyectiles en el juego.
+
+    Atributos:
+        PROJECTILES (list): Lista estática que almacena todas las instancias de proyectiles.
+        image: Imagen del proyectil.
+        rect: Rectángulo de pygame que representa la posición del proyectil.
+        x (float): Posición x del proyectil.
+        y (float): Posición y del proyectil.
+        angle (int): Ángulo de movimiento del proyectil.
+        speed (int): Velocidad del proyectil.
+        x_vel (float): Velocidad horizontal calculada.
+        y_vel (float): Velocidad vertical calculada.
+        projectile_lifetime: Tiempo de vida del proyectil antes de ser destruido.
+        spawn_time: Tiempo en el que el proyectil fue creado.
+        damage (int): Daño que el proyectil puede infligir.
+        body (pymunk.Body): Cuerpo físico de pymunk para el proyectil.
+        shape (pymunk.Shape): Forma física de pymunk para el proyectil.
+        space: Espacio físico de pymunk donde reside el proyectil.
+
+    Métodos:
+        projectile_movement: Método abstracto para definir el movimiento del proyectil.
+        destroy_projectile: Elimina el proyectil del juego y de la lista de proyectiles.
+        update: Actualiza la posición y el estado del proyectil.
+        get_vector_distance: Calcula la distancia vectorial entre dos puntos.
+    """
     PROJECTILES = []
 
     def __init__(self,x:float, y:float, angle:int, speed:int, damage:int,space, image):
@@ -54,6 +80,16 @@ class Projectile(pygame.sprite.Sprite, ABC):
         return (enemy_vector - projectile_vector).magnitude()
 
 class KnifeProjectile(Projectile):
+    """
+    Representa un proyectil de tipo 'Knife'.
+
+    Atributos estáticos:
+        IMAGE: Imagen asociada al proyectil 'Knife'.
+
+    Métodos:
+        __init__: Constructor de la clase KnifeProjectile.
+        projectile_movement: Define el movimiento del proyectil 'Knife'.
+    """
     IMAGE = pygame.transform.rotozoom(pygame.image.load('Assets/Projectiles/navaja.png'), 0, .25)
 
     def __init__(self, x:float, y:float, angle:int, space, tier:int) -> None:
@@ -73,10 +109,21 @@ class KnifeProjectile(Projectile):
         self.rect.y = (self.y)
 
         self.body.position = self.x, self.y
+
         if pygame.time.get_ticks() - self.spawn_time > self.projectile_lifetime:
             self.destroy_projectile()
 
 class MagicWandProjectile(Projectile):
+    """
+    Representa un proyectil de tipo 'Magic Wand'.
+
+    Atributos estáticos:
+        IMAGE: Imagen asociada al proyectil 'Magic Wand'.
+
+    Métodos:
+        __init__: Constructor de la clase MagicWandProjectile.
+        projectile_movement: Define el movimiento del proyectil 'Magic Wand', buscando seguir al enemigo más cercano.
+    """
     IMAGE = pygame.image.load('Assets/Projectiles/magic_wand_projectile.png')
 
     def __init__(self, x:float, y:float, angle:int, space, tier:int) -> None:
@@ -100,6 +147,16 @@ class MagicWandProjectile(Projectile):
         self.body.position = projectile_vector.x, projectile_vector.y
 
 class FireWandProjectile(Projectile):
+    """
+    Representa un proyectil de tipo 'Fire Wand'.
+
+    Atributos estáticos:
+        IMAGE: Imagen asociada al proyectil 'Fire Wand'.
+
+    Métodos:
+        __init__: Constructor de la clase FireWandProjectile.
+        projectile_movement: Define el movimiento del proyectil 'Fire Wand'.
+    """
     IMAGE = pygame.image.load('Assets/Projectiles/fire_wand_projectile.png')
 
     def __init__(self, x:float, y:float, angle:int, space, player, tier:int) -> None:
