@@ -378,39 +378,39 @@ def prepare_level_up():
 
     this_game.selected_item_display = []
 
-    for i in player.Weapons:
+    for i in player.WEAPONS:
         print(f"Arma: {i.name} Tier: {i.tier}")
         if i.tier == i.max_tier:
             print("Arma Maxeada")
             if i.type in this_game.level_item_display:
                 this_game.level_item_display.remove(i.type)
 
-    for i in player.Equipment:
+    for i in player.EQUIPMENT:
         print(f"Equipamiento: {i.name} Tier: {i.tier}")
         if i.tier == i.max_tier:
             print("Equipamiento Maxeado")
             if i.type in this_game.level_item_display:
                 this_game.level_item_display.remove(i.type)
 
-    # if len(player.Weapons) == player.MAX_CAPACITTY and not this_game.cleaned_weapons:
+    # if len(player.WEAPONS) == player.MAX_CAPACITTY and not this_game.cleaned_weapons:
     #     print("Se llenó armas")
     #     this_game.clean_weapons()
     #     temp = []
     #     for i in range(0, len(this_game.level_item_display)):
     #         if issubclass(type(this_game.level_item_display[i]), Weapon):
-    #             if this_game.level_item_display[i]  in player.Weapons:
+    #             if this_game.level_item_display[i]  in player.WEAPONS:
     #                 temp.append(this_game.level_item_display[i])
     #         else:
     #             temp.append(this_game.level_item_display[i])
     #     this_game.level_item_display = temp
 
-    # if len(player.Equipment) == player.MAX_CAPACITTY and not this_game.cleaned_equipment:
+    # if len(player.EQUIPMENT) == player.MAX_CAPACITTY and not this_game.cleaned_equipment:
     #     print("Se llenó el equipamiento")
     #     this_game.clean_equipment()
     #     temp = []
     #     for i in range(0, len(this_game.level_item_display)):
-    #         if issubclass(type(this_game.level_item_display[i]), Equipment):
-    #             if this_game.level_item_display[i]  in player.Equipment:
+    #         if issubclass(type(this_game.level_item_display[i]), EQUIPMENT):
+    #             if this_game.level_item_display[i]  in player.EQUIPMENT:
     #                 temp.append(this_game.level_item_display[i])
     #         else:
     #             temp.append(this_game.level_item_display[i])
@@ -448,9 +448,9 @@ def prepare_chest():
     
 def get_chest_item():
     items_to_chest = []
-    for i in player.Weapons:
+    for i in player.WEAPONS:
         items_to_chest.append(i)
-    for i in player.Equipment:
+    for i in player.EQUIPMENT:
         items_to_chest.append(i)
 
     selected_items = []

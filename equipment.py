@@ -29,6 +29,8 @@ class Equipment():
     
 
 class SpecificEquipment(ABC):
+
+    @abstractmethod
     def create(self):
         pass
 

@@ -7,17 +7,15 @@ from settings import *
 from projectile import *
 import pymunk
 from weapon import * 
-from enemy import Enemy
 
-def convert_coordinates(point):
-        return int(point[0]), (int(point[1]))
+
 
 class Player(pygame.sprite.Sprite):
     """
     Clase que representa al jugador en el juego.
 
     Atributos:
-        Weapons (list): Lista de armas que el jugador puede usar.
+        WEAPONS (list): Lista de armas que el jugador puede usar.
         FACT_WEAPON (FactoryWeapon): Fábrica para crear instancias de armas.
         pos (Vector2): Posición del jugador en el juego.
         image (Surface): Imagen que representa al jugador.
@@ -31,10 +29,13 @@ class Player(pygame.sprite.Sprite):
         body (pymunk.Body): Cuerpo físico del jugador en el motor de física.
         shape (pymunk.Circle): Forma física asociada al cuerpo del jugador.
     """
-    Weapons = []
-    Equipment = []
+    WEAPONS = []
+    EQUIPMENT = []
     MAX_CAPACITTY = 5
     FACT_WEAPON = FactoryWeapon()
+
+    def convert_coordinates(point):
+        return int(point[0]), (int(point[1]))
 
     def __init__(self, hp, speed, space):
         super().__init__()
@@ -60,7 +61,7 @@ class Player(pygame.sprite.Sprite):
         
 
         self.body = pymunk.Body(1, 100)
-        self.body.position = convert_coordinates(self.pos)
+        self.body.position = Player.convert_coordinates(self.pos)
         self.shape = pymunk.Circle(self.body, 25)
         self.shape.collision_type = 1
 
@@ -140,7 +141,7 @@ class Player(pygame.sprite.Sprite):
         Utiliza las armas equipadas por el jugador.
         Crea y añade proyectiles al grupo de sprites en función del arma utilizada.
         """
-        for weapon in Player.Weapons:
+        for weapon in Player.WEAPONS:
             if weapon.actual_cooldown == 0:
                 weapon.actual_cooldown = weapon.cooldown
                 spawn_projectile = self.pos
@@ -152,13 +153,13 @@ class Player(pygame.sprite.Sprite):
     def add_item(self, item):
         if isinstance(item, FactoryEquipment.EquipmentCatalog):
             print("Es equipamiento")
-            if item.value in Player.Equipment:
-                index = Player.Equipment.index(item.value)
-                if Player.Equipment[index].upgrade_equipment():
+            if item.value in Player.EQUIPMENT:
+                index = Player.EQUIPMENT.index(item.value)
+                if Player.EQUIPMENT[index].upgrade_equipment():
                     stat, modifier = item.value.get_effect()
                     self.apply_stat(stat, modifier)
             else:
-                Player.Equipment.append(item.value.create())
+                Player.EQUIPMENT.append(item.value.create())
                 stat, modifier = (item.value.STAT, item.value.MOFIFIER)
                 self.apply_stat(stat, modifier)
 
@@ -182,20 +183,20 @@ class Player(pygame.sprite.Sprite):
         """
         flag = False
 
-        for w in Player.Weapons:
+        for w in Player.WEAPONS:
             if(weapon == w.type):
                 w.upgrade_weapon()
                 flag = True
                 break
 
         if(weapon != None and not flag):
-            Player.Weapons.append(Player.FACT_WEAPON.create_weapon(weapon))
+            Player.WEAPONS.append(Player.FACT_WEAPON.create_weapon(weapon))
     
     def move(self):
         self.pos += pygame.math.Vector2(self.velocity_x * self.move_speed,self.velocity_y * self.move_speed)
 
         self.hitbox_rect.center = self.pos
-        self.body.position = convert_coordinates(self.pos)
+        self.body.position = Player.convert_coordinates(self.pos)
 
     def apply_stat(self, stat: int, modif: float):
         """
@@ -282,7 +283,7 @@ class Player(pygame.sprite.Sprite):
         self.player_rotate()
 
 
-        for weapon in Player.Weapons:
+        for weapon in Player.WEAPONS:
             if weapon.actual_cooldown > 0:
                 weapon.actual_cooldown -= 1
 

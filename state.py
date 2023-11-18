@@ -1,18 +1,15 @@
 from abc import ABC, abstractmethod
 
+
+
 class State(ABC):
     ''' Clase que establece los estados del juego '''
 
-    def __init__(self, maingame, name) -> None:
+    def __init__(self, maingame, name: str) -> None:
         self.maingame = maingame #Conexión a la partida
         self.name = name
 
     @abstractmethod
-    def change_to_select_character(self):
-        ''' Estado de selecccionar personaje '''
-        pass
-
-    @abstractmethod
     def change_to_play(self):
         ''' Estado de jugar '''
         pass
@@ -33,38 +30,6 @@ class State(ABC):
         pass
 
     @abstractmethod
-    def change_to_game_over(self):
-        ''' Estado de fin del juego '''
-        pass
-
-
-class SelectCharacterState(State):
-    ''' Estado de Seleccionar el Personaje '''
-
-    def __init__(self, maingame) -> None:
-        super().__init__(maingame, "Select")
-
-
-    def change_to_select_character(self):
-        ''' Estado de selecccionar personaje '''
-        pass
-
-    def change_to_play(self):
-        ''' Estado de jugar '''
-        print("Jugando")
-
-    def change_to_level_up(self):
-        ''' Estado de subir de nivel '''
-        pass
-
-    def change_to_chest(self):
-        ''' Estado de cofre '''
-        pass
-
-    def change_to_pause(self):
-        ''' Estado de pausa '''
-        pass
-
     def change_to_game_over(self):
         ''' Estado de fin del juego '''
         pass
@@ -75,10 +40,6 @@ class PlayState(State):
 
     def __init__(self, maingame) -> None:
         super().__init__(maingame, "Play")
-
-    def change_to_select_character(self):
-        ''' Estado de selecccionar personaje '''
-        pass
 
     def change_to_play(self):
         ''' Estado de jugar '''
@@ -110,9 +71,6 @@ class LevelUpState(State):
     def __init__(self, maingame) -> None:
         super().__init__(maingame, "Level")
 
-    def change_to_select_character(self):
-        ''' Estado de selecccionar personaje '''
-        pass
 
     def change_to_play(self):
         ''' Estado de jugar '''
@@ -143,9 +101,6 @@ class ChestState(State):
     def __init__(self, maingame) -> None:
         super().__init__(maingame, "Chest")
 
-    def change_to_select_character(self):
-        ''' Estado de selecccionar personaje '''
-        pass
 
     def change_to_play(self):
         ''' Estado de jugar '''
@@ -177,9 +132,6 @@ class PauseState(State):
         super().__init__(maingame, "Pause")
 
 
-    def change_to_select_character(self):
-        ''' Estado de selecccionar personaje '''
-        pass
 
     def change_to_play(self):
         ''' Estado de jugar '''
@@ -209,12 +161,6 @@ class GameOverState(State):
 
     def __init__(self, maingame) -> None:
         super().__init__(maingame, "Over")
-
-
-    def change_to_select_character(self):
-        ''' Estado de selecccionar personaje '''
-        print("Seleccionando personaje")
-
 
     def change_to_play(self):
         ''' Estado de jugar '''

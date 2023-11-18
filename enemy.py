@@ -128,6 +128,8 @@ class Enemy(pygame.sprite.Sprite):
 
 # 1.- Interface para enemies
 class SpecificEnemy(ABC):
+
+    @abstractmethod
     def create(self, position, player, space) -> Enemy:
         ''' Crea un enemigo especifico y retorna ese objeto'''
         pass
