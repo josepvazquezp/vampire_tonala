@@ -681,8 +681,16 @@ class Game(object):
             self.draw_game_over_screen()
     # =========================================================================================================
     
+    # Music
+    def music(self):
+        """ Método para mandar llamar a la música """
+        pygame.mixer.music.load('./Assets/music/bloody_tears.mp3')
+        pygame.mixer.music.play(-1)
+
+
     # Main Game
     def mainGame(self):
+        self.music()
 
         while True:
             self.updateSpawn()
