@@ -151,7 +151,6 @@ class Player(pygame.sprite.Sprite):
 
     def add_item(self, item):
         if isinstance(item, FactoryEquipment.EquipmentCatalog):
-            print("Es equipamiento")
             if item.value in Player.Equipment:
                 index = Player.Equipment.index(item.value)
                 if Player.Equipment[index].upgrade_equipment():
@@ -163,8 +162,6 @@ class Player(pygame.sprite.Sprite):
                 self.apply_stat(stat, modifier)
 
         elif isinstance(item, FactoryWeapon.WeaponCatalog):
-            print("Es arma")
-            print(item.name)
             self.equip_weapon(item)
         else:
             stat, modifier = item.pick_up()
@@ -246,7 +243,6 @@ class Player(pygame.sprite.Sprite):
         ''' Sube de nivel al jugador y establece la nueva meta para el siguiente nivel '''
         self.level += 1
         self.next_level_xp += 150 
-        print("LEVEL UP")
 
 
     def heal(self, heal: int):

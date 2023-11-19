@@ -12,13 +12,6 @@ from abc import ABC, abstractmethod
 from enum import Enum
 
 import pymunk
-'''
-El bat tiene HP: 1, power: 5, speed: 1.4
-El mantis tiene HP: 150, power: 20, speed: 0.8
-El skulon tiene HP: 30, power: 10, speed: 1
-El reeper tiene HP: 600, power: 60, speed: 5
-'''
-
 
 class Enemy(pygame.sprite.Sprite):
     """
