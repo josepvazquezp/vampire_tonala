@@ -56,7 +56,6 @@ class Chest(pygame.sprite.Sprite):
         """
         ''' Esta madre deberia de soltar del loot '''
         selected_item = random.choice(items)
-        print(selected_item)
         return selected_item
 
     def destroy(self):
