@@ -354,7 +354,6 @@ class Game(object):
                 if self.player.is_dead():
                     self.current_state.change_to_game_over()
                     self.change_paused()
-                    pass
 
                 ene.restoreCooldown()
                 self.enemyCooldown.append(ene)

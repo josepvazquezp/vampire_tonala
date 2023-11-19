@@ -31,7 +31,7 @@ class State(ABC):
     def change_to_game_over(self):
         ''' Estado de fin del juego '''
         pass
-    
+
 
 class PlayState(State):
     ''' Estado de juego principal '''
@@ -45,22 +45,18 @@ class PlayState(State):
 
     def change_to_level_up(self):
         ''' Estado de subir de nivel '''
-        print("Subió de nivel")
         self.maingame.change_state(LevelUpState(self.maingame))
 
     def change_to_chest(self):
         ''' Estado de cofre '''
-        print("Agarro un cofre")
         self.maingame.change_state(ChestState(self.maingame))
 
     def change_to_pause(self):
         ''' Estado de pausa '''
-        print("Pausando")
         self.maingame.change_state(PauseState(self.maingame))
 
     def change_to_game_over(self):
         ''' Estado de fin del juego '''
-        print("Fin del Juego")
         self.maingame.change_state(GameOverState(self.maingame))
 
 class LevelUpState(State):
@@ -71,7 +67,6 @@ class LevelUpState(State):
 
     def change_to_play(self):
         ''' Estado de jugar '''
-        print("Jugando")
         self.maingame.change_state(PlayState(self.maingame))
 
 
@@ -100,7 +95,6 @@ class ChestState(State):
 
     def change_to_play(self):
         ''' Estado de jugar '''
-        print("Jugando")
         self.maingame.change_state(PlayState(self.maingame))
 
     def change_to_level_up(self):
@@ -109,8 +103,6 @@ class ChestState(State):
 
     def change_to_chest(self):
         ''' Estado de cofre '''
-        print("MISMO ESTADO")
-
 
     def change_to_pause(self):
         ''' Estado de pausa '''
@@ -129,7 +121,6 @@ class PauseState(State):
 
     def change_to_play(self):
         ''' Estado de jugar '''
-        print("Jugando")
         self.maingame.change_state(PlayState(self.maingame))
 
 
